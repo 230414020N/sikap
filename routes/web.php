@@ -33,7 +33,7 @@ use App\Http\Controllers\Perusahaan\CompanyController as PerusahaanCompanyContro
 use App\Http\Controllers\Perusahaan\PerusahaanDashboardController;
 
 Route::view('/', 'welcome')->name('home');
-Route::get('/profile/edit{id}', [PelamarProfileController::class, 'edit']);
+Route::get('/profile/edit/{id}', [PelamarProfileController::class, 'edit']);
 
 Route::middleware('guest')->group(function () {
     Route::get('/login/pelamar', [RoleLoginController::class, 'show'])->defaults('as', 'pelamar')->name('login.pelamar');
