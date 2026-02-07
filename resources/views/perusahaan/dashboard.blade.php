@@ -25,6 +25,7 @@
         ['label' => 'Profile', 'icon' => '👤', 'href' => $companyEditHref, 'active' => 'perusahaan.company.*'],
         ['label' => 'Kelola Akun HRD', 'icon' => '⚙️', 'href' => $hrdIndexHref, 'active' => 'perusahaan.hrd.*'],
         ['label' => 'Lowongan', 'icon' => '💼', 'href' => $jobsIndexHref, 'active' => 'perusahaan.jobs.*'],
+        ['label' => 'Laporan Rekrutmen', 'icon' => '📊', 'href' => '#', 'active' => 'perusahaan.reports.*']
     ];
 
     $stats = [

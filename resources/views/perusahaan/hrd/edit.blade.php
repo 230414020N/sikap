@@ -27,7 +27,7 @@
             <a href="{{ route('perusahaan.hrd.index') }}" class="{{ request()->routeIs('perusahaan.hrd.*') ? $navActive : $navInactive }} {{ $navBase }}">
                 <span>⚙️</span> Kelola Akun HRD
             </a>
-            <a href="#" class="text-gray-600 hover:bg-gray-100 {{ $navBase }}">
+            <a href="{{ route('perusahaan.jobs.index') }}" class="{{ request()->routeIs('perusahaan.jobs.*') ? $navActive : $navInactive }} {{ $navBase }}">
                 <span>💼</span> Lowongan
             </a>
             <a href="#" class="text-gray-600 hover:bg-gray-100 {{ $navBase }}">

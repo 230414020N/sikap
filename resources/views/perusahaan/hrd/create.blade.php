@@ -14,7 +14,7 @@
         ['label' => 'Dashboard', 'icon' => '🏠', 'href' => route('perusahaan.dashboard'), 'active' => 'perusahaan.dashboard'],
         ['label' => 'Profile', 'icon' => '👤', 'href' => route('perusahaan.company.edit'), 'active' => 'perusahaan.company.*'],
         ['label' => 'Kelola Akun HRD', 'icon' => '⚙️', 'href' => route('perusahaan.hrd.index'), 'active' => 'perusahaan.hrd.*'],
-        ['label' => 'Lowongan', 'icon' => '💼', 'href' => '#', 'active' => 'perusahaan.jobs.*'],
+        ['label' => 'Lowongan', 'icon' => '💼', 'href' => route('perusahaan.jobs.index'), 'active' => 'perusahaan.jobs.*'],
         ['label' => 'Laporan Rekrutmen', 'icon' => '📊', 'href' => '#', 'active' => 'perusahaan.reports.*'],
     ];
 @endphp
