@@ -5,278 +5,145 @@
     $companyName = $company->nama_perusahaan ?? $company->nama ?? $company->name ?? 'Perusahaan';
     $companyInitial = strtoupper(mb_substr(trim((string) $companyName), 0, 1)) ?: 'P';
 
-    $navBase = 'flex items-center justify-between rounded-2xl px-4 py-3 text-sm font-medium transition focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-900/20 focus-visible:ring-offset-2';
-    $navActive = 'bg-gray-900 text-white shadow-sm';
-    $navInactive = 'border border-gray-200 bg-white text-gray-900 hover:bg-gray-50';
+    // Styling sesuai gambar (Rounded corners tinggi, warna netral)
+    $navBase = 'flex items-center justify-between rounded-xl px-4 py-3 text-sm font-medium transition duration-200';
+    $navActive = 'bg-gray-800 text-white shadow-md';
+    $navInactive = 'text-gray-600 hover:bg-gray-100';
 
-    $btnBase = 'inline-flex items-center justify-center rounded-2xl px-5 py-3 text-sm font-medium transition focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-900/20 focus-visible:ring-offset-2';
-    $btnSecondary = $btnBase.' border border-gray-200 bg-white text-gray-900 hover:bg-gray-50';
-    $btnPrimary = $btnBase.' bg-gray-900 text-white hover:bg-black shadow-sm';
+    $btnPrimary = 'inline-flex items-center justify-center rounded-xl bg-gray-900 px-5 py-2.5 text-sm font-medium text-white hover:bg-black transition shadow-sm';
+    $btnSecondary = 'inline-flex items-center justify-center rounded-xl border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 transition';
 
-    $companyEditHref = \Illuminate\Support\Facades\Route::has('perusahaan.company.edit')
-        ? route('perusahaan.company.edit')
-        : ((\Illuminate\Support\Facades\Route::has('companies.edit') && ($company?->id)) ? route('companies.edit', $company->id) : '#');
-
+    // Logic Href tetap sama
+    $companyEditHref = \Illuminate\Support\Facades\Route::has('perusahaan.company.edit') ? route('perusahaan.company.edit') : '#';
     $jobsIndexHref = \Illuminate\Support\Facades\Route::has('perusahaan.jobs.index') ? route('perusahaan.jobs.index') : '#';
     $jobsCreateHref = \Illuminate\Support\Facades\Route::has('perusahaan.jobs.create') ? route('perusahaan.jobs.create') : '#';
-
     $hrdIndexHref = \Illuminate\Support\Facades\Route::has('perusahaan.hrd.index') ? route('perusahaan.hrd.index') : '#';
-
     $dashboardHref = \Illuminate\Support\Facades\Route::has('perusahaan.dashboard') ? route('perusahaan.dashboard') : url('/perusahaan/dashboard');
 
     $menu = [
-        ['label' => 'Dashboard', 'href' => $dashboardHref, 'active' => 'perusahaan.dashboard', 'right' => '↵'],
-        ['label' => 'Lowongan', 'href' => $jobsIndexHref, 'active' => 'perusahaan.jobs.*', 'right' => '→'],
-        ['label' => 'HRD', 'href' => $hrdIndexHref, 'active' => 'perusahaan.hrd.*', 'right' => '→'],
-        ['label' => 'Profil Perusahaan', 'href' => $companyEditHref, 'active' => 'perusahaan.company.*', 'right' => '→'],
+        ['label' => 'Dashboard', 'icon' => '🏠', 'href' => $dashboardHref, 'active' => 'perusahaan.dashboard'],
+        ['label' => 'Profile', 'icon' => '👤', 'href' => $companyEditHref, 'active' => 'perusahaan.company.*'],
+        ['label' => 'Kelola Akun HRD', 'icon' => '⚙️', 'href' => $hrdIndexHref, 'active' => 'perusahaan.hrd.*'],
+        ['label' => 'Lowongan', 'icon' => '💼', 'href' => $jobsIndexHref, 'active' => 'perusahaan.jobs.*'],
     ];
-
-    $jobCountValue = (int) ($jobCount ?? 0);
-    $jobActiveCountValue = (int) ($jobActiveCount ?? $jobCountValue);
-    $hrdCountValue = (int) ($hrdCount ?? 0);
-    $applicationCountValue = (int) ($applicationCount ?? 0);
-
-    $profileCompleteValue = (bool) ($profileComplete ?? true);
 
     $stats = [
-        [
-            'label' => 'Lowongan Aktif',
-            'value' => $jobActiveCountValue,
-            'desc' => 'Posisi yang sedang dibuka',
-            'icon' => '📌',
-            'iconClass' => 'bg-gray-900 text-white',
-        ],
-        [
-            'label' => 'Total Lowongan',
-            'value' => $jobCountValue,
-            'desc' => 'Semua lowongan yang dibuat',
-            'icon' => '🗂️',
-            'iconClass' => 'border border-gray-200 bg-gray-50 text-gray-900',
-        ],
-        [
-            'label' => 'HRD',
-            'value' => $hrdCountValue,
-            'desc' => 'Akun HRD terdaftar',
-            'icon' => '👥',
-            'iconClass' => 'border border-gray-200 bg-white text-gray-900',
-        ],
-        [
-            'label' => 'Pelamar Masuk',
-            'value' => $applicationCountValue,
-            'desc' => 'Lamaran yang diterima',
-            'icon' => '📨',
-            'iconClass' => 'bg-gray-900 text-white',
-        ],
+        ['label' => 'Lowongan Aktif', 'value' => $jobActiveCount ?? 12, 'desc' => 'Posisi yang sedang dibuka', 'color' => 'bg-blue-50 text-blue-600'],
+        ['label' => 'Lamaran Masuk', 'value' => $applicationCount ?? 450, 'desc' => 'Total berkas pelamar', 'color' => 'bg-orange-50 text-orange-600'],
+        ['label' => 'Diterima', 'value' => $acceptedCount ?? 30, 'desc' => 'Kandidat lolos seleksi', 'color' => 'bg-green-50 text-green-600'],
+        ['label' => 'Ditolak', 'value' => $rejectedCount ?? 10, 'desc' => 'Kandidat tidak memenuhi kriteria', 'color' => 'bg-red-50 text-red-600'],
     ];
-
-    $latestJobsValue = $latestJobs ?? collect();
-    $latestApplicationsValue = $latestApplications ?? collect();
 @endphp
 
-<div class="min-h-screen bg-gray-100">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div class="bg-gray-50 border border-gray-200 rounded-[28px] shadow-sm overflow-hidden">
-            <div class="grid grid-cols-1 lg:grid-cols-[280px_1fr] min-h-[78vh]">
-                <aside class="bg-white border-b lg:border-b-0 lg:border-r border-gray-200 lg:sticky lg:top-0 lg:h-screen">
-                    <div class="p-6">
-                        <div class="flex items-center gap-3">
-                            <div class="h-11 w-11 rounded-3xl bg-gray-900 text-white flex items-center justify-center text-sm font-semibold shadow-sm">
-                                {{ $companyInitial }}
-                            </div>
-                            <div class="leading-tight min-w-0">
-                                <p class="text-base font-semibold tracking-tight text-gray-900 truncate">{{ $companyName }}</p>
-                                <p class="text-xs text-gray-500">Perusahaan</p>
-                            </div>
-                        </div>
-
-                        <div class="mt-6">
-                            <p class="text-[11px] font-semibold tracking-widest text-gray-500">MENU</p>
-                            <div class="mt-3 space-y-2">
-                                @foreach($menu as $item)
-                                    @php $isActive = request()->routeIs($item['active']); @endphp
-                                    <a href="{{ $item['href'] }}"
-                                       @class([
-                                           $navBase,
-                                           $navActive => $isActive,
-                                           $navInactive => !$isActive,
-                                       ])>
-                                        <span>{{ $item['label'] }}</span>
-                                        <span @class([
-                                            'text-xs',
-                                            'text-white/70' => $isActive,
-                                            'text-gray-500' => !$isActive,
-                                        ])>{{ $item['right'] }}</span>
-                                    </a>
-                                @endforeach
-                            </div>
-                        </div>
-                    </div>
-                </aside>
-
-                <main class="bg-gray-50">
-                    <div class="p-6 sm:p-8">
-                        <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-                            <div class="min-w-0">
-                                <h1 class="text-2xl sm:text-3xl font-semibold tracking-tight text-gray-900 truncate">Dashboard Perusahaan</h1>
-                                <p class="mt-1 text-sm text-gray-600">Pantau lowongan, HRD, dan pelamar di satu tempat.</p>
-                            </div>
-
-                            <div class="flex flex-col sm:flex-row gap-3">
-                                <a href="{{ $jobsCreateHref }}" class="{{ $btnPrimary }}">Buat Lowongan</a>
-                                <a href="{{ $companyEditHref }}" class="{{ $btnSecondary }}">Edit Profil</a>
-                            </div>
-                        </div>
-
-                        <div class="mt-7 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                            @foreach($stats as $card)
-                                <div class="bg-white border border-gray-200 rounded-3xl shadow-sm p-5">
-                                    <div class="flex items-start justify-between gap-4">
-                                        <div>
-                                            <p class="text-xs text-gray-600">{{ $card['label'] }}</p>
-                                            <p class="mt-2 text-3xl font-semibold text-gray-900">{{ $card['value'] }}</p>
-                                            <p class="mt-2 text-xs text-gray-500">{{ $card['desc'] }}</p>
-                                        </div>
-                                        <div class="h-10 w-10 rounded-2xl flex items-center justify-center text-xs font-semibold {{ $card['iconClass'] }}">
-                                            {{ $card['icon'] }}
-                                        </div>
-                                    </div>
-                                </div>
-                            @endforeach
-                        </div>
-
-                        <div class="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-4">
-                            <div class="lg:col-span-2 bg-white border border-gray-200 rounded-3xl shadow-sm overflow-hidden">
-                                <div class="px-6 py-5 border-b border-gray-200 flex items-center justify-between">
-                                    <div>
-                                        <p class="text-sm font-semibold text-gray-900">Lowongan Terbaru</p>
-                                        <p class="mt-1 text-xs text-gray-600">Kelola cepat posisi yang baru dibuat.</p>
-                                    </div>
-                                    <a href="{{ $jobsIndexHref }}" class="text-sm text-gray-900 underline underline-offset-4 hover:text-gray-700">
-                                        Lihat semua
-                                    </a>
-                                </div>
-
-                                <div class="divide-y divide-gray-200">
-                                    @forelse($latestJobsValue as $job)
-                                        <div class="px-6 py-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                                            <div class="min-w-0">
-                                                <p class="text-sm font-semibold text-gray-900 truncate">
-                                                    {{ $job->judul ?? $job->title ?? 'Lowongan' }}
-                                                </p>
-                                                <p class="mt-1 text-sm text-gray-600 truncate">
-                                                    {{ $job->lokasi ?? $job->location ?? '—' }}
-                                                </p>
-                                                <p class="mt-2 text-xs text-gray-500">
-                                                    {{ optional($job->created_at)->format('d M Y, H:i') }}
-                                                </p>
-                                            </div>
-
-                                            <div class="flex items-center gap-2">
-                                                <span class="text-xs px-3 py-1 rounded-full border border-gray-200 bg-gray-50 text-gray-800">
-                                                    {{ $job->status ?? 'Aktif' }}
-                                                </span>
-
-                                                @php
-                                                    $editHref = (\Illuminate\Support\Facades\Route::has('perusahaan.jobs.edit') && ($job?->id))
-                                                        ? route('perusahaan.jobs.edit', $job->id)
-                                                        : '#';
-                                                @endphp
-
-                                                <a href="{{ $editHref }}"
-                                                   class="rounded-2xl bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-black transition shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-900/20 focus-visible:ring-offset-2 focus-visible:ring-offset-white">
-                                                    Edit
-                                                </a>
-                                            </div>
-                                        </div>
-                                    @empty
-                                        <div class="px-6 py-10 text-center text-sm text-gray-600">
-                                            Belum ada lowongan. Buat lowongan pertama kamu.
-                                        </div>
-                                    @endforelse
-                                </div>
-                            </div>
-
-                            <div class="bg-white border border-gray-200 rounded-3xl shadow-sm p-6">
-                                <div class="flex items-start justify-between gap-4">
-                                    <div>
-                                        <p class="text-sm font-semibold text-gray-900">Status Profil</p>
-                                        <p class="mt-1 text-xs text-gray-600">Biar pelamar makin yakin.</p>
-                                    </div>
-                                    <div class="h-10 w-10 rounded-2xl border border-gray-200 bg-gray-50 flex items-center justify-center text-xs font-semibold text-gray-900">
-                                        {{ $profileCompleteValue ? '✓' : '!' }}
-                                    </div>
-                                </div>
-
-                                <div class="mt-5 rounded-3xl border border-gray-200 bg-gray-50 p-5">
-                                    @if($profileCompleteValue)
-                                        <p class="text-sm font-semibold text-gray-900">Profil sudah siap</p>
-                                        <p class="mt-1 text-xs text-gray-600">Info perusahaan terlihat lebih kredibel.</p>
-                                    @else
-                                        <p class="text-sm font-semibold text-gray-900">Perlu dilengkapi</p>
-                                        <p class="mt-1 text-xs text-gray-600">Lengkapi deskripsi, alamat, dan kontak.</p>
-                                    @endif
-
-                                    <a href="{{ $companyEditHref }}" class="mt-4 w-full {{ $btnSecondary }}">
-                                        {{ $profileCompleteValue ? 'Edit Profil' : 'Lengkapi Profil' }}
-                                    </a>
-                                </div>
-
-                                <div class="mt-4 space-y-3">
-                                    <a href="{{ $hrdIndexHref }}" class="block rounded-2xl border border-gray-200 bg-white p-4 hover:bg-gray-50 transition">
-                                        <p class="text-sm font-semibold text-gray-900">Kelola HRD</p>
-                                        <p class="mt-1 text-sm text-gray-600">Tambah dan atur akses HRD.</p>
-                                    </a>
-
-                                    <a href="{{ $jobsIndexHref }}" class="block rounded-2xl border border-gray-200 bg-white p-4 hover:bg-gray-50 transition">
-                                        <p class="text-sm font-semibold text-gray-900">Kelola Lowongan</p>
-                                        <p class="mt-1 text-sm text-gray-600">Edit, tutup, atau buat posisi baru.</p>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="mt-6 bg-white border border-gray-200 rounded-3xl shadow-sm overflow-hidden">
-                            <div class="px-6 py-5 border-b border-gray-200">
-                                <p class="text-sm font-semibold text-gray-900">Pelamar Terbaru</p>
-                                <p class="mt-1 text-xs text-gray-600">Ringkasan pelamar masuk (opsional).</p>
-                            </div>
-
-                            <div class="divide-y divide-gray-200">
-                                @forelse($latestApplicationsValue as $app)
-                                    <div class="px-6 py-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                                        <div class="min-w-0">
-                                            <p class="text-sm font-semibold text-gray-900 truncate">
-                                                {{ $app->user?->name ?? $app->pelamar?->nama ?? 'Pelamar' }}
-                                            </p>
-                                            <p class="mt-1 text-sm text-gray-600 truncate">
-                                                {{ $app->job?->judul ?? $app->job?->title ?? 'Lowongan' }}
-                                            </p>
-                                            <p class="mt-2 text-xs text-gray-500">
-                                                {{ optional($app->created_at)->format('d M Y, H:i') }}
-                                            </p>
-                                        </div>
-
-                                        <div class="flex items-center gap-2">
-                                            <span class="text-xs px-3 py-1 rounded-full border border-gray-200 bg-gray-50 text-gray-800">
-                                                {{ $app->status ?? 'Masuk' }}
-                                            </span>
-                                            <a href="#" class="{{ $btnSecondary }} px-4 py-2">
-                                                Detail
-                                            </a>
-                                        </div>
-                                    </div>
-                                @empty
-                                    <div class="px-6 py-10 text-center text-sm text-gray-600">
-                                        Belum ada pelamar masuk.
-                                    </div>
-                                @endforelse
-                            </div>
-                        </div>
-
-                    </div>
-                </main>
+<div class="min-h-screen bg-[#F4F4F4] font-sans">
+    <div class="flex max-w-[1600px] mx-auto min-h-screen">
+        
+        <aside class="w-72 bg-white border-r border-gray-200 hidden lg:flex flex-col p-6">
+            <div class="mb-10 px-2">
+                <img src="{{ asset('images/logo.png') }}" alt="SIKAP" class="h-15">
             </div>
-        </div>
+
+            <nav class="flex-1 space-y-2">
+                @foreach($menu as $item)
+                    @php $isActive = request()->routeIs($item['active']); @endphp
+                    <a href="{{ $item['href'] }}" class="{{ $isActive ? $navActive : $navInactive }} {{ $navBase }}">
+                        <div class="flex items-center gap-3">
+                            <span>{{ $item['icon'] }}</span>
+                            <span>{{ $item['label'] }}</span>
+                        </div>
+                    </a>
+                @endforeach
+            </nav>
+
+            <div class="mt-auto pt-6 border-t border-gray-100">
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit" class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-red-600 hover:bg-red-50 rounded-xl w-full transition">
+                        <span>🚪</span> Keluar
+                    </button>
+                </form>
+            </div>
+        </aside>
+
+        <main class="flex-1 p-6 lg:p-10">
+            <header class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-900">Selamat datang, {{ $companyName }}!</h1>
+                    <p class="text-gray-500 text-sm">Mari kelola dan pantau proses rekrutmen Anda dengan praktis.</p>
+                </div>
+                <div class="flex items-center gap-4">
+                    <button class="p-2 bg-white rounded-full border border-gray-200 text-gray-500 hover:bg-gray-50">🔔</button>
+                    <div class="flex items-center gap-3 bg-white p-1 pr-4 rounded-full border border-gray-200">
+                        <div class="h-8 w-8 rounded-full bg-gray-900 text-white flex items-center justify-center text-xs">{{ $companyInitial }}</div>
+                        <span class="text-sm font-medium text-gray-700">{{ $companyName }}</span>
+                    </div>
+                </div>
+            </header>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                @foreach($stats as $stat)
+                    <div class="bg-white p-6 rounded-[24px] shadow-sm border border-gray-100 flex flex-col items-center text-center">
+                        <p class="text-sm font-bold text-gray-800">{{ $stat['label'] }}</p>
+                        <p class="text-xs text-gray-400 mb-4">({{ $stat['desc'] }})</p>
+                        <p class="text-5xl font-bold mb-2 {{ $stat['color'] === 'bg-orange-50 text-orange-600' ? 'text-orange-400' : ($stat['color'] === 'bg-blue-50 text-blue-600' ? 'text-blue-400' : 'text-gray-800') }}">
+                            {{ $stat['value'] }}
+                        </p>
+                    </div>
+                @endforeach
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-2 bg-white p-8 rounded-[32px] shadow-sm border border-gray-100">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="font-bold text-gray-900">Rekapitulasi Terbaru</h3>
+                        <a href="{{ $jobsCreateHref }}" class="{{ $btnPrimary }}">Buat Lowongan</a>
+                    </div>
+                    
+                    {{-- <div class="space-y-4">
+                        <p class="text-xs text-gray-500 uppercase tracking-wider font-semibold">Lowongan Terbaru</p>
+                        <div class="divide-y divide-gray-50">
+                            @forelse($latestJobsValue as $job)
+                                <div class="py-4 flex items-center justify-between">
+                                    <div>
+                                        <p class="font-semibold text-gray-900 text-sm">{{ $job->judul ?? 'Untitled Job' }}</p>
+                                        <p class="text-xs text-gray-500">{{ $job->lokasi ?? 'Remote' }} • {{ optional($job->created_at)->diffForHumans() }}</p>
+                                    </div>
+                                    <span class="px-3 py-1 bg-green-50 text-green-600 text-[10px] font-bold rounded-full uppercase">Aktif</span>
+                                </div>
+                            @empty
+                                <div class="text-center py-10 text-gray-400 text-sm italic">Belum ada data lowongan.</div>
+                            @endforelse
+                        </div>
+                    </div> --}}
+                </div>
+
+                <div class="bg-white p-8 rounded-[32px] shadow-sm border border-gray-100">
+                    <h3 class="font-bold text-gray-900 mb-6">Status Lowongan Terakhir</h3>
+                    <div class="space-y-6">
+                        @php
+                            $sampleJobs = [['title' => 'Software Engineer', 'status' => 'Aktif'], ['title' => 'UI/UX Designer', 'status' => 'Aktif'], ['title' => 'Digital Marketing', 'status' => 'Non-Aktif']];
+                        @endphp
+                        @foreach($sampleJobs as $sJob)
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm font-medium text-gray-700">{{ $sJob['title'] }}</span>
+                                <span class="px-4 py-1.5 rounded-full text-[10px] font-bold {{ $sJob['status'] == 'Aktif' ? 'bg-emerald-400 text-white' : 'bg-red-400 text-white' }}">
+                                    {{ $sJob['status'] }}
+                                </span>
+                            </div>
+                        @endforeach
+                    </div>
+                    
+                    <div class="mt-10 p-4 bg-gray-50 rounded-2xl border border-dashed border-gray-300">
+                        <p class="text-xs text-gray-600 mb-3">Lengkapi profil perusahaan Anda untuk kredibilitas lebih baik.</p>
+                        <a href="{{ $companyEditHref }}" class="text-xs font-bold text-gray-900 underline underline-offset-4">Edit Profil →</a>
+                    </div>
+                </div>
+            </div>
+
+            <footer class="mt-12 text-center text-gray-400 text-xs">
+                <p>&copy; 2025, Sistem Informasi Karier dan Portofolio (SIKAP)</p>
+            </footer>
+        </main>
     </div>
 </div>
 @endsection

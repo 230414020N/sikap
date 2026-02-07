@@ -1,182 +1,128 @@
 @extends('layouts.guest')
 
+@section('title', 'Registrasi Perusahaan')
+
 @section('content')
-    <div class="w-full max-w-xl">
-        <div class="bg-white border border-gray-200 rounded-3xl shadow-sm p-6 sm:p-7">
-            <div class="flex items-start justify-between gap-4">
-                <div class="min-w-0">
-                    <p class="text-[11px] font-semibold tracking-widest text-gray-500">PERUSAHAAN</p>
-                    <h1 class="mt-2 text-2xl font-semibold tracking-tight text-gray-900">Registrasi Perusahaan</h1>
-                    <p class="mt-1 text-sm text-gray-600">Buat akun perusahaan untuk mengelola akun HRD.</p>
+<div class="w-full max-w-6xl bg-[#D9D9D9] rounded-[40px] shadow-lg overflow-hidden flex flex-col md:flex-row min-h-[700px] mx-4">
+    
+    <div class="w-full md:w-1/4 p-10 flex flex-col gap-6 border-b md:border-b-0 md:border-r border-gray-400/40">
+        <a href="{{ route('login') }}" class="flex items-center gap-4 p-5 rounded-3xl text-gray-500 hover:bg-gray-300 transition-all">
+            <div class="p-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+                </svg>
+            </div>
+            <span class="font-bold text-2xl">Masuk</span>
+        </a>
+
+        <a href="#" class="flex items-center gap-4 bg-[#BDBDBD] p-5 rounded-3xl transition-all shadow-sm">
+            <div class="bg-black p-2.5 rounded-xl text-white">
+                <svg xmlns="http://www.w3.org/2000/xl" class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+                </svg>
+            </div>
+            <span class="font-bold text-2xl text-gray-800">Daftar</span>
+        </a>
+    </div>
+
+    <div class="flex-1 p-10 md:p-16 flex flex-col justify-center">
+        <div class="mb-8">
+            <p class="text-xl text-gray-700">Daftar sebagai perusahaan</p>
+            <h1 class="text-5xl font-bold text-black mt-2">Pasang Lowongan Kerjamu Sekarang!</h1>
+        </div>
+
+        @if($errors->any())
+            <div class="mb-6 p-4 bg-red-100 border-l-4 border-red-500 text-red-700 rounded-lg">
+                Ada beberapa input yang belum valid. Coba cek lagi ya.
+            </div>
+        @endif
+
+        <form method="POST" action="{{ route('perusahaan.register.store') }}" class="space-y-6 max-w-4xl">
+            @csrf
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                
+                <div class="space-y-6">
+                    <h2 class="text-2xl font-bold text-gray-800 border-b border-gray-400/30 pb-2">Data PIC Admin</h2>
+                    
+                    <div class="space-y-2">
+                        <label for="name" class="text-lg font-medium text-black">Nama Lengkap PIC</label>
+                        <input id="name" name="name" type="text" value="{{ old('name') }}" placeholder="Masukkan Nama Lengkap"
+                            class="w-full p-4 rounded-xl border-none bg-white text-lg shadow-sm focus:ring-2 focus:ring-gray-400" required>
+                        <x-input-error :messages="$errors->get('name')" />
+                    </div>
+
+                    <div class="space-y-2">
+                        <label for="whatsapp" class="text-lg font-medium text-black">Nomor WhatsApp PIC</label>
+                        <input id="whatsapp" name="whatsapp" type="text" placeholder="Masukkan Nomor WhatsApp"
+                            class="w-full p-4 rounded-xl border-none bg-white text-lg shadow-sm focus:ring-2 focus:ring-gray-400">
+                        <p class="text-[10px] text-gray-600 italic leading-tight">Pastikan nomor whatsapp mu sesuai.</p>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label for="email" class="text-lg font-medium text-black">E-mail Perusahaan</label>
+                        <input id="email" name="email" type="email" value="{{ old('email') }}" placeholder="nama@perusahaan.com"
+                            class="w-full p-4 rounded-xl border-none bg-white text-lg shadow-sm focus:ring-2 focus:ring-gray-400" required>
+                        <x-input-error :messages="$errors->get('email')" />
+                    </div>
+
+                    <div class="grid grid-cols-1 gap-4">
+                        <div class="space-y-2">
+                            <label for="password" class="text-lg font-medium text-black">Kata Sandi</label>
+                            <input id="password" name="password" type="password" placeholder="Buat Kata Sandi"
+                                class="w-full p-4 rounded-xl border-none bg-white text-lg shadow-sm focus:ring-2 focus:ring-gray-400" required>
+                        </div>
+                        <div class="space-y-2">
+                            <label for="password_confirmation" class="text-lg font-medium text-black">Ulangi Kata Sandi</label>
+                            <input id="password_confirmation" name="password_confirmation" type="password" placeholder="Konfirmasi Kata Sandi"
+                                class="w-full p-4 rounded-xl border-none bg-white text-lg shadow-sm focus:ring-2 focus:ring-gray-400" required>
+                        </div>
+                    </div>
                 </div>
-                <div class="h-11 w-11 rounded-3xl bg-gray-900 text-white flex items-center justify-center text-sm font-semibold shadow-sm">
-                    🏢
+
+                <div class="space-y-6">
+                    <h2 class="text-2xl font-bold text-gray-800 border-b border-gray-400/30 pb-2">Detail Perusahaan</h2>
+
+                    <div class="space-y-2">
+                        <label for="company_nama" class="text-lg font-medium text-black">Nama Perusahaan</label>
+                        <input id="company_nama" name="company_nama" type="text" value="{{ old('company_nama') }}" placeholder="PT Nama Perusahaan"
+                            class="w-full p-4 rounded-xl border-none bg-white text-lg shadow-sm focus:ring-2 focus:ring-gray-400" required>
+                        <x-input-error :messages="$errors->get('company_nama')" />
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="space-y-2">
+                            <label for="company_industri" class="text-lg font-medium text-black">Industri</label>
+                            <input id="company_industri" name="company_industri" type="text" value="{{ old('company_industri') }}" placeholder="Misal: IT"
+                                class="w-full p-4 rounded-xl border-none bg-white text-lg shadow-sm focus:ring-2 focus:ring-gray-400">
+                        </div>
+                        <div class="space-y-2">
+                            <label for="company_lokasi" class="text-lg font-medium text-black">Lokasi</label>
+                            <input id="company_lokasi" name="company_lokasi" type="text" value="{{ old('company_lokasi') }}" placeholder="Kota"
+                                class="w-full p-4 rounded-xl border-none bg-white text-lg shadow-sm focus:ring-2 focus:ring-gray-400">
+                        </div>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label for="company_website" class="text-lg font-medium text-black">Website</label>
+                        <input id="company_website" name="company_website" type="text" value="{{ old('company_website') }}" placeholder="https://..."
+                            class="w-full p-4 rounded-xl border-none bg-white text-lg shadow-sm focus:ring-2 focus:ring-gray-400">
+                    </div>
+
+                    <div class="space-y-2">
+                        <label for="company_deskripsi" class="text-lg font-medium text-black">Deskripsi Singkat</label>
+                        <textarea id="company_deskripsi" name="company_deskripsi" rows="2" placeholder="Tentang perusahaan..."
+                            class="w-full p-4 rounded-xl border-none bg-white text-lg shadow-sm focus:ring-2 focus:ring-gray-400">{{ old('company_deskripsi') }}</textarea>
+                    </div>
                 </div>
             </div>
 
-            @if($errors->any())
-                <div class="mt-6 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-                    Ada beberapa input yang belum valid. Coba cek lagi ya.
-                </div>
-            @endif
-
-            <form method="POST" action="{{ route('perusahaan.register.store') }}" class="mt-7 space-y-6">
-                @csrf
-
-                <div class="rounded-3xl border border-gray-200 bg-gray-50 p-5 space-y-4">
-                    <div>
-                        <p class="text-sm font-semibold text-gray-900">Data Perusahaan</p>
-                        <p class="mt-1 text-xs text-gray-600">Informasi ini akan tampil di lowongan (bisa diubah nanti).</p>
-                    </div>
-
-                    <div class="bg-white border border-gray-200 rounded-3xl p-5 space-y-4">
-                        <div>
-                            <x-input-label for="company_nama" value="Nama Perusahaan" class="text-sm font-medium text-gray-900" />
-                            <x-text-input
-                                id="company_nama"
-                                type="text"
-                                name="company_nama"
-                                value="{{ old('company_nama') }}"
-                                required
-                                class="mt-2 block w-full rounded-2xl border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 focus:border-gray-300 focus:ring-2 focus:ring-gray-900/10"
-                                placeholder="Contoh: PT SIKAP Teknologi"
-                            />
-                            <x-input-error :messages="$errors->get('company_nama')" class="mt-2" />
-                        </div>
-
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div>
-                                <x-input-label for="company_industri" value="Industri (opsional)" class="text-sm font-medium text-gray-900" />
-                                <x-text-input
-                                    id="company_industri"
-                                    type="text"
-                                    name="company_industri"
-                                    value="{{ old('company_industri') }}"
-                                    class="mt-2 block w-full rounded-2xl border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 focus:border-gray-300 focus:ring-2 focus:ring-gray-900/10"
-                                    placeholder="Contoh: Software / Fintech"
-                                />
-                                <x-input-error :messages="$errors->get('company_industri')" class="mt-2" />
-                            </div>
-
-                            <div>
-                                <x-input-label for="company_lokasi" value="Lokasi (opsional)" class="text-sm font-medium text-gray-900" />
-                                <x-text-input
-                                    id="company_lokasi"
-                                    type="text"
-                                    name="company_lokasi"
-                                    value="{{ old('company_lokasi') }}"
-                                    class="mt-2 block w-full rounded-2xl border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 focus:border-gray-300 focus:ring-2 focus:ring-gray-900/10"
-                                    placeholder="Contoh: Jakarta"
-                                />
-                                <x-input-error :messages="$errors->get('company_lokasi')" class="mt-2" />
-                            </div>
-                        </div>
-
-                        <div>
-                            <x-input-label for="company_website" value="Website (opsional)" class="text-sm font-medium text-gray-900" />
-                            <x-text-input
-                                id="company_website"
-                                type="text"
-                                name="company_website"
-                                value="{{ old('company_website') }}"
-                                class="mt-2 block w-full rounded-2xl border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 focus:border-gray-300 focus:ring-2 focus:ring-gray-900/10"
-                                placeholder="https://perusahaan.com"
-                            />
-                            <x-input-error :messages="$errors->get('company_website')" class="mt-2" />
-                        </div>
-
-                        <div>
-                            <x-input-label for="company_deskripsi" value="Deskripsi (opsional)" class="text-sm font-medium text-gray-900" />
-                            <x-textarea
-                                id="company_deskripsi"
-                                name="company_deskripsi"
-                                rows="4"
-                                class="mt-2 block w-full rounded-2xl border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 focus:border-gray-300 focus:ring-2 focus:ring-gray-900/10"
-                                placeholder="Ceritakan singkat tentang perusahaan (opsional)."
-                            >{{ old('company_deskripsi') }}</x-textarea>
-                            <x-input-error :messages="$errors->get('company_deskripsi')" class="mt-2" />
-                        </div>
-                    </div>
-                </div>
-
-                <div class="rounded-3xl border border-gray-200 bg-gray-50 p-5 space-y-4">
-                    <div>
-                        <p class="text-sm font-semibold text-gray-900">Akun Admin Perusahaan</p>
-                        <p class="mt-1 text-xs text-gray-600">Akun ini untuk mengelola perusahaan dan membuat akun HRD.</p>
-                    </div>
-
-                    <div class="bg-white border border-gray-200 rounded-3xl p-5 space-y-4">
-                        <div>
-                            <x-input-label for="name" value="Nama" class="text-sm font-medium text-gray-900" />
-                            <x-text-input
-                                id="name"
-                                type="text"
-                                name="name"
-                                value="{{ old('name') }}"
-                                required
-                                class="mt-2 block w-full rounded-2xl border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 focus:border-gray-300 focus:ring-2 focus:ring-gray-900/10"
-                                placeholder="Nama admin"
-                            />
-                            <x-input-error :messages="$errors->get('name')" class="mt-2" />
-                        </div>
-
-                        <div>
-                            <x-input-label for="email" value="Email" class="text-sm font-medium text-gray-900" />
-                            <x-text-input
-                                id="email"
-                                type="email"
-                                name="email"
-                                value="{{ old('email') }}"
-                                required
-                                class="mt-2 block w-full rounded-2xl border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 focus:border-gray-300 focus:ring-2 focus:ring-gray-900/10"
-                                placeholder="nama@perusahaan.com"
-                            />
-                            <x-input-error :messages="$errors->get('email')" class="mt-2" />
-                        </div>
-
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div>
-                                <x-input-label for="password" value="Password" class="text-sm font-medium text-gray-900" />
-                                <x-text-input
-                                    id="password"
-                                    type="password"
-                                    name="password"
-                                    required
-                                    class="mt-2 block w-full rounded-2xl border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 focus:border-gray-300 focus:ring-2 focus:ring-gray-900/10"
-                                    placeholder="••••••••"
-                                />
-                                <x-input-error :messages="$errors->get('password')" class="mt-2" />
-                            </div>
-
-                            <div>
-                                <x-input-label for="password_confirmation" value="Konfirmasi Password" class="text-sm font-medium text-gray-900" />
-                                <x-text-input
-                                    id="password_confirmation"
-                                    type="password"
-                                    name="password_confirmation"
-                                    required
-                                    class="mt-2 block w-full rounded-2xl border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 focus:border-gray-300 focus:ring-2 focus:ring-gray-900/10"
-                                    placeholder="••••••••"
-                                />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pt-1">
-                    <a href="{{ route('login') }}" class="text-sm text-gray-900 underline underline-offset-4 hover:text-gray-700">
-                        Sudah punya akun? Login
-                    </a>
-
-                    <x-primary-button class="justify-center rounded-2xl px-6 py-3">
-                        Daftar Perusahaan
-                    </x-primary-button>
-                </div>
-            </form>
-        </div>
-
-        <p class="mt-4 text-center text-xs text-gray-500">
-            Dengan mendaftar, kamu menyetujui kebijakan dan ketentuan penggunaan.
-        </p>
+            <div class="flex justify-end pt-6">
+                <button type="submit" class="w-full md:w-72 bg-[#BDBDBD] py-5 rounded-2xl text-2xl font-bold text-gray-800 hover:bg-gray-400 transition-all shadow-md">
+                    Selanjutnya
+                </button>
+            </div>
+        </form>
     </div>
+</div>
 @endsection
