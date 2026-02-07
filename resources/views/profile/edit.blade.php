@@ -1,83 +1,127 @@
 @extends('layouts.app')
 
-@section('title', 'Pengaturan Akun')
+@section('title', 'Dokumen Saya')
 
 @section('content')
-<div class="min-h-screen bg-gray-50">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between mb-8">
-            <div class="min-w-0">
-                <h1 class="text-2xl font-semibold tracking-tight text-gray-900">Pengaturan Akun</h1>
-                <p class="mt-1 text-sm text-gray-600">Kelola data profil, keamanan, dan penghapusan akun.</p>
-            </div>
-
-            <a href="{{ route('dashboard') }}"
-               class="text-sm text-gray-900 underline underline-offset-4 hover:text-gray-700">
-                ← Kembali
+<div class="flex min-h-screen bg-[#E5E7EB]">
+    <aside class="w-64 bg-white border-r border-gray-300 hidden md:flex flex-col p-6 sticky top-0 h-screen">
+        <div class="mb-10 px-2 font-bold text-2xl tracking-tighter italic text-gray-900">
+            SIKAP<span class="text-xs font-normal align-top not-italic">.</span>
+        </div>
+        <nav class="flex-1 space-y-2 text-sm font-medium">
+            <a href="{{ route('dashboard') }}" class="flex items-center gap-3 rounded-xl px-4 py-3 text-gray-600 hover:bg-gray-200 transition">
+                <span>🏠</span> Dashboard
             </a>
+            <a href="{{ route('pelamar.profile.show') }}" class="flex items-center gap-3 rounded-xl px-4 py-3 text-gray-600 hover:bg-gray-200 transition">
+                <span>👤</span> Profile
+            </a>
+            <a href="{{ route('pelamar.portofolio.index') }}" class="flex items-center gap-3 rounded-xl px-4 py-3 text-gray-600 hover:bg-gray-200 transition">
+                <span>📂</span> Portofolio
+            </a>
+            <a href="{{ route('pelamar.applications.tracking') }}" class="flex items-center gap-3 rounded-xl px-4 py-3 text-gray-600 hover:bg-gray-200 transition">
+                <span>💼</span> Lamaran
+            </a>
+        </nav>
+        <div class="mt-auto border-t border-gray-300 pt-4">
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button class="flex items-center gap-3 w-full px-4 py-3 text-gray-600 hover:text-red-600 transition">
+                    <span>🚪</span> Keluar
+                </button>
+            </form>
         </div>
+    </aside>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <aside class="lg:col-span-1">
-                <div class="bg-white border border-gray-200 rounded-3xl shadow-sm p-6">
-                    <p class="text-sm font-semibold text-gray-900">Ringkasan</p>
-                    <p class="mt-1 text-xs text-gray-600">Update akun kamu di sini.</p>
-
-                    <div class="mt-5 space-y-3">
-                        <a href="#profile"
-                           class="block rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm font-medium text-gray-900 hover:bg-gray-100 transition">
-                            Profil
-                        </a>
-                        <a href="#security"
-                           class="block rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm font-medium text-gray-900 hover:bg-gray-100 transition">
-                            Keamanan
-                        </a>
-                        <a href="#danger"
-                           class="block rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700 hover:bg-red-100 transition">
-                            Hapus Akun
-                        </a>
-                    </div>
-
-                    <div class="mt-6 rounded-3xl border border-gray-200 bg-white p-5">
-                        <p class="text-xs text-gray-600">Tips</p>
-                        <p class="mt-2 text-sm font-semibold text-gray-900">Gunakan password kuat</p>
-                        <p class="mt-1 text-xs text-gray-600">Minimal 8 karakter + kombinasi huruf & angka.</p>
-                    </div>
+    <main class="flex-1 bg-[#4B4B4B] p-6 lg:p-10">
+        <header class="flex justify-between items-center mb-10 text-white">
+            <div>
+                <h1 class="text-4xl font-black uppercase tracking-tight">DOKUMEN SAYA</h1>
+                <p class="text-sm opacity-70">Kelola CV dan dokumen pendukung lamaranmu.</p>
+            </div>
+            <div class="flex items-center gap-4">
+                <span class="text-sm font-bold italic">{{ Auth::user()->name }}</span>
+                <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center text-gray-900 shadow-lg">
+                    👤
                 </div>
-            </aside>
+            </div>
+        </header>
 
-            <main class="lg:col-span-2 space-y-6">
-                <section id="profile" class="bg-white border border-gray-200 rounded-3xl shadow-sm overflow-hidden">
-                    <div class="px-6 py-5 border-b border-gray-200">
-                        <p class="text-sm font-semibold text-gray-900">Profil</p>
-                        <p class="mt-1 text-xs text-gray-600">Perbarui nama, email, dan informasi akun.</p>
+        <div class="bg-[#D1D5DB] rounded-[40px] p-8 mb-8 shadow-inner">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-white rounded-[32px] p-8 flex flex-col items-center text-center shadow-sm">
+                    <p class="font-bold text-gray-900 mb-6 uppercase tracking-wider">Curriculum Vitae (CV)</p>
+                    <div class="mb-8">
+                        <svg class="w-24 h-24 text-gray-900" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20M13,13V18H15V13H13M9,13V18H11V13H9M9,10V12H15V10H9Z" />
+                        </svg>
                     </div>
-                    <div class="p-6">
-                        @include('profile.partials.update-profile-information-form')
-                    </div>
-                </section>
+                    <button class="w-full bg-[#3498DB] hover:bg-blue-600 text-white font-bold py-3 rounded-xl transition shadow-md">
+                        + Unggah File
+                    </button>
+                    <p class="mt-4 text-[10px] text-gray-400 font-bold uppercase">Max. Ukuran : 10 MB (PDF)</p>
+                </div>
 
-                <section id="security" class="bg-white border border-gray-200 rounded-3xl shadow-sm overflow-hidden">
-                    <div class="px-6 py-5 border-b border-gray-200">
-                        <p class="text-sm font-semibold text-gray-900">Keamanan</p>
-                        <p class="mt-1 text-xs text-gray-600">Ganti password untuk menjaga akun tetap aman.</p>
+                <div class="bg-white rounded-[32px] p-8 flex flex-col items-center text-center shadow-sm">
+                    <p class="font-bold text-gray-900 mb-6 uppercase tracking-wider">Surat Lamaran</p>
+                    <div class="mb-8">
+                        <svg class="w-24 h-24 text-gray-900" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M20,4H4C2.89,4 2,4.89 2,6V18A2,2 0 0,0 4,20H20A2,2 0 0,0 22,18V6C22,4.89 21.1,4 20,4M20,18H4V8L12,13L20,8V18M12,11L4,6H20L12,11Z" />
+                        </svg>
                     </div>
-                    <div class="p-6">
-                        @include('profile.partials.update-password-form')
-                    </div>
-                </section>
+                    <button class="w-full bg-[#3498DB] hover:bg-blue-600 text-white font-bold py-3 rounded-xl transition shadow-md">
+                        + Unggah File
+                    </button>
+                    <p class="mt-4 text-[10px] text-gray-400 font-bold uppercase">Max. Ukuran : 10 MB (PDF)</p>
+                </div>
 
-                <section id="danger" class="bg-white border border-red-200 rounded-3xl shadow-sm overflow-hidden">
-                    <div class="px-6 py-5 border-b border-red-200 bg-red-50">
-                        <p class="text-sm font-semibold text-red-700">Zona Berbahaya</p>
-                        <p class="mt-1 text-xs text-red-600">Aksi ini bersifat permanen dan tidak bisa dibatalkan.</p>
+                <div class="bg-white rounded-[32px] p-8 flex flex-col items-center text-center shadow-sm">
+                    <p class="font-bold text-gray-900 mb-6 uppercase tracking-wider">Sertifikat Pendukung</p>
+                    <div class="mb-8">
+                        <svg class="w-24 h-24 text-gray-900" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M13,13H11V7H13M13,17H11V15H13M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z" />
+                        </svg>
                     </div>
-                    <div class="p-6">
-                        @include('profile.partials.delete-user-form')
-                    </div>
-                </section>
-            </main>
+                    <button class="w-full bg-[#3498DB] hover:bg-blue-600 text-white font-bold py-3 rounded-xl transition shadow-md">
+                        + Unggah File
+                    </button>
+                    <p class="mt-4 text-[10px] text-gray-400 font-bold uppercase">Max. Ukuran : 10 MB (PDF)</p>
+                </div>
+            </div>
         </div>
-    </div>
+
+        <div class="bg-[#D1D5DB] rounded-[40px] p-8 shadow-inner">
+            <h3 class="text-xl font-black text-gray-900 mb-6 uppercase tracking-tight">File Terunggah</h3>
+            <div class="bg-white rounded-3xl overflow-hidden shadow-sm">
+                <div class="divide-y divide-gray-100">
+                    {{-- Ganti bagian ini dengan @foreach data dokumen asli Anda --}}
+                    @forelse($documents ?? [] as $doc)
+                    <div class="flex items-center justify-between p-5 hover:bg-gray-50 transition">
+                        <div class="flex items-center gap-4">
+                            <span class="text-xl">📄</span>
+                            <p class="text-sm font-bold text-gray-800 tracking-tight">{{ $doc->name }}</p>
+                        </div>
+                        <div class="flex items-center gap-6">
+                            <span class="text-xs font-bold text-gray-400 uppercase tracking-tighter">{{ $doc->created_at->diffForHumans() }}</span>
+                            <form method="POST" action="#">
+                                @csrf @method('DELETE')
+                                <button class="text-gray-400 hover:text-red-500 transition">
+                                    🗑️
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    @empty
+                    <div class="p-10 text-center italic text-gray-400 font-medium">
+                        Belum ada file yang diunggah.
+                    </div>
+                    @endforelse
+                </div>
+            </div>
+        </div>
+
+        <footer class="mt-12 text-center text-gray-400 text-xs py-6">
+            © 2026, Sistem Informasi Karier dan Portofolio (SIKAP)
+        </footer>
+    </main>
 </div>
 @endsection

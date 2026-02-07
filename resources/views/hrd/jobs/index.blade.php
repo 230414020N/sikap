@@ -1,23 +1,5 @@
 @extends('layouts.app')
 
-@section('header')
-    <div class="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-        <div class="min-w-0">
-            <h1 class="text-2xl font-semibold tracking-tight text-gray-900">Lowongan</h1>
-            <p class="mt-1 text-sm text-gray-600">Kelola lowongan, status aktif, dan akses cepat ke kandidat.</p>
-        </div>
-
-        <div class="flex items-center gap-2">
-            @if(Route::has('hrd.jobs.create'))
-                <a href="{{ route('hrd.jobs.create') }}"
-                   class="inline-flex items-center justify-center rounded-2xl bg-gray-900 px-5 py-3 text-sm font-medium text-white hover:bg-black transition shadow-sm">
-                    + Buat Lowongan
-                </a>
-            @endif
-        </div>
-    </div>
-@endsection
-
 @section('content')
     @php
         $hasFilters = (string) request()->getQueryString() !== '';
@@ -29,223 +11,159 @@
         $activeCount = method_exists($jobs, 'total') ? $jobs->total() : (is_countable($jobs) ? count($jobs) : 0);
     @endphp
 
-    <div class="min-h-screen bg-gray-50">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-            @if(session('success'))
-                <div class="mb-6">
-                    <x-alert type="success">{{ session('success') }}</x-alert>
-                </div>
-            @endif
+<div class="max-w-7xl mx-auto px-4 py-8">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-800">Lowongan Pekerjaan</h1>
+            <p class="text-gray-500 mt-1">Kelola publikasi lowongan dan pantau status rekrutmen perusahaan Anda.</p>
+        </div>
+        
+        @if(Route::has('hrd.jobs.create'))
+            <a href="{{ route('hrd.jobs.create') }}"
+               class="inline-flex items-center justify-center rounded-xl bg-[#3AB4F2] px-6 py-3 text-sm font-bold text-white hover:bg-blue-500 transition shadow-sm gap-2">
+                <span class="text-lg">+</span> Tambah Lowongan Pekerjaan
+            </a>
+        @endif
+    </div>
 
-            @if($errors->any())
-                <div class="mb-6">
-                    <x-alert type="error">Terjadi kesalahan input. Coba cek lagi.</x-alert>
-                </div>
-            @endif
-
-            <div class="bg-white border border-gray-200 rounded-3xl shadow-sm overflow-hidden">
-                <div class="px-6 py-5 border-b border-gray-200 flex items-start justify-between gap-4">
-                    <div>
-                        <p class="text-sm font-semibold text-gray-900">Filter</p>
-                        <p class="mt-1 text-xs text-gray-600">Cari berdasarkan judul, tipe, level, dan sortir sesuai kebutuhan.</p>
-                    </div>
-
-                    <div class="rounded-2xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-700">
-                        Total: <span class="font-semibold text-gray-900">{{ $activeCount }}</span>
-                    </div>
-                </div>
-
-                <form method="GET" action="{{ route('hrd.jobs.index') }}" class="p-6 grid grid-cols-1 sm:grid-cols-12 gap-4">
-                    <div class="sm:col-span-4">
-                        <label class="text-xs font-medium text-gray-700">Keyword</label>
-                        <input type="text" name="q" value="{{ $q }}"
-                               class="mt-2 w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-900/10 focus:border-gray-300 transition"
-                               placeholder="Judul / tipe / level">
-                    </div>
-
-                    <div class="sm:col-span-2">
-                        <label class="text-xs font-medium text-gray-700">Status</label>
-                        <select name="status"
-                                class="mt-2 w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10 focus:border-gray-300 transition">
-                            <option value="">Semua</option>
-                            <option value="active" @selected($statusSelected === 'active')>Aktif</option>
-                            <option value="inactive" @selected($statusSelected === 'inactive')>Nonaktif</option>
-                        </select>
-                    </div>
-
-                    <div class="sm:col-span-2">
-                        <label class="text-xs font-medium text-gray-700">Urutkan</label>
-                        <select name="sort"
-                                class="mt-2 w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10 focus:border-gray-300 transition">
-                            <option value="latest" @selected($sortSelected === 'latest')>Terbaru</option>
-                            <option value="oldest" @selected($sortSelected === 'oldest')>Terlama</option>
-                        </select>
-                    </div>
-
-                    <div class="sm:col-span-2">
-                        <label class="text-xs font-medium text-gray-700">Kategori</label>
-                        <select name="job_category_id"
-                                class="mt-2 w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10 focus:border-gray-300 transition">
-                            <option value="">Semua</option>
-                            @foreach(($categories ?? collect()) as $c)
-                                <option value="{{ $c->id }}" @selected((string) $c->id === $categorySelected)>{{ $c->nama }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <div class="sm:col-span-2">
-                        <label class="text-xs font-medium text-gray-700">Lokasi</label>
-                        <select name="job_location_id"
-                                class="mt-2 w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10 focus:border-gray-300 transition">
-                            <option value="">Semua</option>
-                            @foreach(($locations ?? collect()) as $l)
-                                <option value="{{ $l->id }}" @selected((string) $l->id === $locationSelected)>{{ $l->nama }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <div class="sm:col-span-12 flex flex-col sm:flex-row sm:justify-end gap-2 pt-1">
-                        @if($hasFilters)
-                            <a href="{{ route('hrd.jobs.index') }}"
-                               class="inline-flex items-center justify-center rounded-2xl border border-gray-200 bg-white px-5 py-3 text-sm font-medium text-gray-900 hover:bg-gray-50 transition">
-                                Reset
-                            </a>
-                        @endif
-
-                        <button type="submit"
-                                class="inline-flex items-center justify-center rounded-2xl bg-gray-900 px-5 py-3 text-sm font-medium text-white hover:bg-black transition shadow-sm">
-                            Terapkan
-                        </button>
-                    </div>
-                </form>
+    <div class="bg-white rounded-[30px] shadow-sm border border-gray-100 p-6 mb-8">
+        <form method="GET" action="{{ route('hrd.jobs.index') }}" class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
+            <div class="md:col-span-3">
+                <label class="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">Cari Lowongan</label>
+                <input type="text" name="q" value="{{ $q }}"
+                       class="mt-1.5 w-full rounded-xl border-gray-100 bg-gray-50 px-4 py-3 text-sm focus:ring-blue-500 focus:border-blue-500 transition"
+                       placeholder="Judul posisi...">
             </div>
 
-            <div class="mt-6 bg-white border border-gray-200 rounded-3xl shadow-sm overflow-hidden">
-                <div class="px-6 py-5 border-b border-gray-200 flex items-center justify-between">
-                    <p class="text-sm font-semibold text-gray-900">Daftar Lowongan</p>
-                    <p class="text-xs text-gray-500">Klik “Edit” untuk ubah detail</p>
-                </div>
+            <div class="md:col-span-2">
+                <label class="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">Kategori</label>
+                <select name="job_category_id" class="mt-1.5 w-full rounded-xl border-gray-100 bg-gray-50 px-4 py-3 text-sm focus:ring-blue-500 transition">
+                    <option value="">Semua Kategori</option>
+                    @foreach(($categories ?? collect()) as $c)
+                        <option value="{{ $c->id }}" @selected((string) $c->id === $categorySelected)>{{ $c->nama }}</option>
+                    @endforeach
+                </select>
+            </div>
 
-                <div class="hidden sm:block">
-                    <table class="w-full text-sm">
-                        <thead class="bg-gray-50 text-gray-600">
-                            <tr>
-                                <th class="text-left px-6 py-3 font-medium">Lowongan</th>
-                                <th class="text-left px-6 py-3 font-medium">Detail</th>
-                                <th class="text-left px-6 py-3 font-medium">Deadline</th>
-                                <th class="text-left px-6 py-3 font-medium">Status</th>
-                                <th class="text-right px-6 py-3 font-medium">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @forelse($jobs as $job)
-                                @php
-                                    $isActive = (bool) ($job->is_active ?? false);
-                                    $statusPill = $isActive ? 'border-green-200 bg-green-50 text-green-800' : 'border-gray-200 bg-gray-50 text-gray-800';
-                                    $deadlineText = $job->deadline ? \Illuminate\Support\Carbon::parse($job->deadline)->format('d M Y') : '—';
-                                    $salaryText = ($job->gaji_min || $job->gaji_max)
-                                        ? trim(($job->gaji_min ? 'Rp ' . number_format((int) $job->gaji_min, 0, ',', '.') : '') . ' — ' . ($job->gaji_max ? 'Rp ' . number_format((int) $job->gaji_max, 0, ',', '.') : ''), ' — ')
-                                        : '—';
-                                    $categoryName = $job->jobCategory->nama ?? $job->category->nama ?? '—';
-                                    $locationName = $job->jobLocation->nama ?? $job->location->nama ?? '—';
-                                @endphp
+            <div class="md:col-span-2">
+                <label class="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">Lokasi</label>
+                <select name="job_location_id" class="mt-1.5 w-full rounded-xl border-gray-100 bg-gray-50 px-4 py-3 text-sm focus:ring-blue-500 transition">
+                    <option value="">Semua Lokasi</option>
+                    @foreach(($locations ?? collect()) as $l)
+                        <option value="{{ $l->id }}" @selected((string) $l->id === $locationSelected)>{{ $l->nama }}</option>
+                    @endforeach
+                </select>
+            </div>
 
-                                <tr class="border-t border-gray-200">
-                                    <td class="px-6 py-4">
-                                        <p class="font-medium text-gray-900">{{ $job->judul }}</p>
-                                        <p class="mt-1 text-xs text-gray-600">
-                                            {{ $categoryName }} • {{ $locationName }}
-                                        </p>
-                                    </td>
+            <div class="md:col-span-2">
+                <label class="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">Status</label>
+                <select name="status" class="mt-1.5 w-full rounded-xl border-gray-100 bg-gray-50 px-4 py-3 text-sm focus:ring-blue-500 transition">
+                    <option value="">Semua Status</option>
+                    <option value="active" @selected($statusSelected === 'active')>Aktif (Proses)</option>
+                    <option value="inactive" @selected($statusSelected === 'inactive')>Nonaktif (Selesai)</option>
+                </select>
+            </div>
 
-                                    <td class="px-6 py-4">
-                                        <p class="text-gray-900">{{ $job->tipe ?: '—' }} • {{ $job->level ?: '—' }}</p>
-                                        <p class="mt-1 text-xs text-gray-600">Gaji: {{ $salaryText }}</p>
-                                    </td>
+            <div class="md:col-span-3 flex gap-2">
+                <button type="submit" class="flex-1 bg-gray-800 text-white rounded-xl py-3 text-sm font-bold hover:bg-black transition">
+                    Filter
+                </button>
+                @if($hasFilters)
+                    <a href="{{ route('hrd.jobs.index') }}" class="bg-gray-100 text-gray-600 rounded-xl px-4 py-3 text-sm font-bold hover:bg-gray-200 transition">
+                        Reset
+                    </a>
+                @endif
+            </div>
+        </form>
+    </div>
 
-                                    <td class="px-6 py-4 text-gray-700">{{ $deadlineText }}</td>
+    <div class="bg-white rounded-[30px] shadow-sm border border-gray-100 overflow-hidden">
+        <div class="px-8 py-6 border-b border-gray-50 flex justify-between items-center">
+            <h3 class="font-bold text-gray-800">Daftar Lowongan (<span class="text-blue-500">{{ $activeCount }}</span>)</h3>
+        </div>
 
-                                    <td class="px-6 py-4">
-                                        <span class="inline-flex items-center rounded-full border px-3 py-1 text-xs font-medium {{ $statusPill }}">
-                                            {{ $isActive ? 'Aktif' : 'Nonaktif' }}
-                                        </span>
-                                    </td>
-
-                                    <td class="px-6 py-4">
-                                        <div class="flex items-center justify-end gap-2">
-                                            <a href="{{ route('hrd.jobs.edit', $job->id) }}"
-                                               class="inline-flex items-center justify-center rounded-2xl border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-900 hover:bg-gray-50 transition">
-                                                Edit
-                                            </a>
-
-                                            @if(Route::has('hrd.jobs.applications.index'))
-                                                <a href="{{ route('hrd.jobs.applications.index', $job->id) }}"
-                                                   class="inline-flex items-center justify-center rounded-2xl bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-black transition shadow-sm">
-                                                    Kandidat
-                                                </a>
-                                            @endif
-                                        </div>
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="5" class="px-6 py-10 text-center text-gray-600">
-                                        Belum ada lowongan. Klik “Buat Lowongan” untuk mulai.
-                                    </td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="sm:hidden divide-y divide-gray-200">
-                    @forelse($jobs as $job)
+        <div class="overflow-x-auto">
+            <table class="w-full text-left">
+                <thead>
+                    <tr class="bg-gray-50/50 text-gray-400 text-[11px] uppercase tracking-[0.1em]">
+                        <th class="px-8 py-4 font-bold">No</th>
+                        <th class="px-4 py-4 font-bold">Posisi Pekerjaan</th>
+                        <th class="px-4 py-4 font-bold">Lokasi & Kategori</th>
+                        <th class="px-4 py-4 font-bold">Gaji & Tipe</th>
+                        <th class="px-4 py-4 font-bold text-center">Status</th>
+                        <th class="px-8 py-4 font-bold text-center">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-50">
+                    @forelse($jobs as $index => $job)
                         @php
                             $isActive = (bool) ($job->is_active ?? false);
-                            $statusPill = $isActive ? 'border-green-200 bg-green-50 text-green-800' : 'border-gray-200 bg-gray-50 text-gray-800';
-                            $deadlineText = $job->deadline ? \Illuminate\Support\Carbon::parse($job->deadline)->format('d M Y') : '—';
-                            $categoryName = $job->jobCategory->nama ?? $job->category->nama ?? '—';
-                            $locationName = $job->jobLocation->nama ?? $job->location->nama ?? '—';
+                            $statusLabel = $isActive ? 'Proses' : 'Selesai';
+                            $statusColor = $isActive ? 'bg-[#82CD47]' : 'bg-[#EB455F]';
+                            $salaryText = ($job->gaji_min || $job->gaji_max)
+                                ? 'Rp' . number_format($job->gaji_min ?? 0, 0, ',', '.')
+                                : 'Tidak ditampilkan';
                         @endphp
-
-                        <div class="px-6 py-5">
-                            <div class="flex items-start justify-between gap-3">
-                                <div class="min-w-0">
-                                    <p class="text-sm font-semibold text-gray-900 truncate">{{ $job->judul }}</p>
-                                    <p class="mt-1 text-xs text-gray-600 truncate">{{ $categoryName }} • {{ $locationName }}</p>
-                                    <p class="mt-2 text-xs text-gray-500">Deadline: {{ $deadlineText }}</p>
-                                </div>
-
-                                <span class="shrink-0 inline-flex items-center rounded-full border px-3 py-1 text-xs font-medium {{ $statusPill }}">
-                                    {{ $isActive ? 'Aktif' : 'Nonaktif' }}
+                        <tr class="hover:bg-gray-50/50 transition-colors">
+                            <td class="px-8 py-6 text-sm text-gray-500">{{ $index + 1 }}</td>
+                            <td class="px-4 py-6">
+                                <p class="font-bold text-gray-800 text-base">{{ $job->judul }}</p>
+                                <p class="text-xs text-gray-400 mt-0.5">Deadline: {{ $job->deadline ? \Carbon\Carbon::parse($job->deadline)->format('d M Y') : '-' }}</p>
+                            </td>
+                            <td class="px-4 py-6">
+                                <p class="text-sm font-semibold text-gray-700">{{ $job->jobLocation->nama ?? 'Remote' }}</p>
+                                <p class="text-xs text-gray-400">{{ $job->jobCategory->nama ?? 'Umum' }}</p>
+                            </td>
+                            <td class="px-4 py-6">
+                                <p class="text-sm font-semibold text-gray-700">{{ $salaryText }}</p>
+                                <p class="text-xs text-gray-400">{{ $job->tipe ?? 'Full-time' }}</p>
+                            </td>
+                            <td class="px-4 py-6 text-center">
+                                <span class="{{ $statusColor }} text-white px-5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">
+                                    {{ $statusLabel }}
                                 </span>
-                            </div>
-
-                            <div class="mt-4 flex items-center justify-between">
-                                <a href="{{ route('hrd.jobs.edit', $job->id) }}"
-                                   class="text-sm text-gray-900 underline underline-offset-4 hover:text-gray-700">
-                                    Edit
-                                </a>
-
-                                @if(Route::has('hrd.jobs.applications.index'))
-                                    <a href="{{ route('hrd.jobs.applications.index', $job->id) }}"
-                                       class="inline-flex items-center justify-center rounded-2xl bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-black transition shadow-sm">
+                            </td>
+                            <td class="px-8 py-6">
+                                <div class="flex items-center justify-center gap-3">
+                                    <a href="#"
+                                       class="bg-gray-100 hover:bg-gray-200 text-gray-600 px-4 py-2 rounded-lg text-xs font-bold transition-all">
                                         Kandidat
                                     </a>
-                                @endif
-                            </div>
-                        </div>
+                                    <a href="{{ route('hrd.jobs.edit', $job->id) }}" class="text-blue-400 hover:text-blue-600 transition-colors">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                        </svg>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
                     @empty
-                        <div class="px-6 py-10 text-center text-gray-600">
-                            Belum ada lowongan.
-                        </div>
+                        <tr>
+                            <td colspan="6" class="px-8 py-12 text-center text-gray-400 italic">
+                                Belum ada lowongan yang terdaftar.
+                            </td>
+                        </tr>
                     @endforelse
-                </div>
-            </div>
-
-            <div class="mt-6">
+                </tbody>
+            </table>
+        </div>
+        
+        @if($jobs->hasPages())
+            <div class="px-8 py-6 bg-gray-50/50 border-t border-gray-50">
                 {{ $jobs->links() }}
             </div>
-        </div>
+        @endif
     </div>
+
+    <div class="mt-12 mb-4 text-center">
+        <p class="text-[10px] font-bold text-gray-300 uppercase tracking-[0.3em]">
+            &copy; {{ now()->year }} SIKAP • Sistem Informasi Karier dan Portofolio
+        </p>
+    </div>
+</div>
+
+<style>
+    body { background-color: #F9FAFB; }
+    table th { font-family: 'Inter', sans-serif; }
+</style>
 @endsection

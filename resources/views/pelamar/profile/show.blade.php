@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="flex min-h-screen bg-[#E5E7EB]">
-    <aside class="w-64 bg-[#E5E7EB] border-r border-gray-300 hidden md:flex flex-col p-6 sticky top-0 h-screen">
+    <aside class="w-64 bg-white border-r border-gray-300 hidden md:flex flex-col p-6 sticky top-0 h-screen">
         <div class="mb-10 px-2 font-bold text-2xl tracking-tighter italic text-gray-900">
             SIKAP<span class="text-xs font-normal align-top not-italic">.</span>
         </div>
@@ -126,7 +126,7 @@
                         </a>
                     @else
                         <p class="text-gray-500 font-medium italic text-sm">Belum ada file CV yang diunggah.</p>
-                        <a href="{{ route('pelamar.profile.edit') }}" class="text-[#00D1A0] font-bold text-xs uppercase hover:underline">
+                        <a href="/pelamar/profile" class="text-[#00D1A0] font-bold text-xs uppercase hover:underline">
                             Upload Sekarang →
                         </a>
                     @endif

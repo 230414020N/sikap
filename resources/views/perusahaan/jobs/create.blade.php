@@ -1,277 +1,177 @@
 @extends('layouts.app')
 
+@section('title', 'Tambah Lowongan')
+
 @section('content')
-{{-- <div class="max-w-4xl mx-auto px-4 py-8">
-  <h1 class="text-2xl font-semibold mb-6">Buat Lowongan</h1>
+@php
+    $defaultActive = (string) old('is_active', '1') === '1';
+@endphp
 
-  @if ($errors->any())
-    <div class="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-900">
-      <ul class="list-disc pl-5 space-y-1">
-        @foreach ($errors->all() as $error)
-          <li>{{ $error }}</li>
-        @endforeach
-      </ul>
-    </div>
-  @endif
-
-  <form method="POST" action="{{ route('perusahaan.jobs.store') }}" class="space-y-6">
-    @csrf
-
-    <div class="rounded-2xl border border-gray-200 bg-white p-6 space-y-4">
-      <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Judul</label>
-        <input type="text" name="judul" value="{{ old('judul') }}"
-               class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm" required>
-      </div>
-
-      <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Deskripsi</label>
-        <textarea name="deskripsi" rows="5"
-                  class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
-                  required>{{ old('deskripsi') }}</textarea>
-      </div>
-
-      <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Kriteria: Status Pekerjaan</label>
-        <select name="employment_status_id" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm">
-          <option value="">- Tidak ditentukan -</option>
-          @foreach($employmentStatus as $s)
-            <option value="{{ $s->id }}" {{ old('employment_status_id') == $s->id ? 'selected' : '' }}>
-              {{ $s->name }}
-            </option>
-          @endforeach
-        </select>
-      </div>
-    </div>
-
-    <div class="flex justify-end">
-      <button type="submit" class="rounded-xl bg-black px-5 py-3 text-sm font-medium text-white hover:opacity-90">
-        Simpan
-      </button>
-    </div>
-  </form>
-</div> --}}
-    @php
-        $defaultActive = (string) old('is_active', '1') === '1';
-        $hasErrors = $errors->any();
-    @endphp
-
-    <div class="min-h-screen bg-gray-50">
-        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-            @if($hasErrors)
-                <div class="mb-6 rounded-3xl border border-red-200 bg-red-50 px-5 py-4 text-sm text-red-700">
-                    Input belum valid. Coba cek field yang bertanda merah.
-                </div>
-            @endif
-
-            <form method="POST" action="{{ route('hrd.jobs.store') }}"
-                  class="bg-white border border-gray-200 rounded-3xl shadow-sm overflow-hidden">
+<div class="flex min-h-screen bg-[#E5E7EB]">
+    <aside class="w-64 bg-[#E5E7EB] border-r border-gray-300 hidden md:flex flex-col p-6 sticky top-0 h-screen">
+        <div class="mb-10 px-2 font-bold text-2xl tracking-tighter italic text-gray-900">
+            SIKAP<span class="text-xs font-normal align-top not-italic">.</span>
+        </div>
+        <nav class="flex-1 space-y-2 text-sm font-medium">
+            <a href="{{ route('dashboard') }}" class="flex items-center gap-3 rounded-xl px-4 py-3 text-gray-600 hover:bg-gray-200 transition">
+                <span>🏠</span> Dashboard
+            </a>
+            <a href="{{ route('hrd.jobs.index') }}" class="flex items-center gap-3 rounded-xl px-4 py-3 bg-[#4B4B4B] text-white shadow-md transition">
+                <span>💼</span> Kelola Lowongan
+            </a>
+            <a href="#" class="flex items-center gap-3 rounded-xl px-4 py-3 text-gray-600 hover:bg-gray-200 transition">
+                <span>👥</span> Pelamar Masuk
+            </a>
+            <a href="#" class="flex items-center gap-3 rounded-xl px-4 py-3 text-gray-600 hover:bg-gray-200 transition">
+                <span>🏢</span> Profil Perusahaan
+            </a>
+        </nav>
+        <div class="mt-auto border-t border-gray-300 pt-4">
+            <form method="POST" action="{{ route('logout') }}">
                 @csrf
-
-                <div class="p-6 border-b border-gray-200">
-                    <p class="text-sm font-semibold text-gray-900">Informasi Utama</p>
-                    <p class="mt-1 text-xs text-gray-600">Judul, kategori, lokasi, pendidikan, dan tipe pekerjaan.</p>
-                </div>
-
-                <div class="p-6 space-y-6">
-                    <div>
-                        <label class="text-xs font-medium text-gray-700">Judul</label>
-                        <input type="text" name="judul" value="{{ old('judul') }}"
-                               @class([
-                                   'mt-2 w-full rounded-2xl border px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900/10 transition',
-                                   'border-red-300 bg-red-50 focus:border-red-300' => $errors->has('judul'),
-                                   'border-gray-200 bg-white focus:border-gray-300' => !$errors->has('judul'),
-                               ])
-                               placeholder="Contoh: Frontend Developer"
-                               required>
-                        @error('judul') <p class="mt-2 text-xs text-red-600">{{ $message }}</p> @enderror
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div>
-                            <label class="text-xs font-medium text-gray-700">Kategori</label>
-                            <select name="job_category_id"
-                                    @class([
-                                        'mt-2 w-full rounded-2xl border px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900/10 transition',
-                                        'border-red-300 bg-red-50 focus:border-red-300' => $errors->has('job_category_id'),
-                                        'border-gray-200 bg-white focus:border-gray-300' => !$errors->has('job_category_id'),
-                                    ])>
-                                <option value="">— Pilih —</option>
-                                @foreach($categories as $c)
-                                    <option value="{{ $c->id }}" @selected((string) old('job_category_id') === (string) $c->id)>{{ $c->nama }}</option>
-                                @endforeach
-                            </select>
-                            @error('job_category_id') <p class="mt-2 text-xs text-red-600">{{ $message }}</p> @enderror
-                        </div>
-
-                        <div>
-                            <label class="text-xs font-medium text-gray-700">Lokasi</label>
-                            <select name="job_location_id"
-                                    @class([
-                                        'mt-2 w-full rounded-2xl border px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900/10 transition',
-                                        'border-red-300 bg-red-50 focus:border-red-300' => $errors->has('job_location_id'),
-                                        'border-gray-200 bg-white focus:border-gray-300' => !$errors->has('job_location_id'),
-                                    ])>
-                                <option value="">— Pilih —</option>
-                                @foreach($locations as $l)
-                                    <option value="{{ $l->id }}" @selected((string) old('job_location_id') === (string) $l->id)>{{ $l->nama }}</option>
-                                @endforeach
-                            </select>
-                            @error('job_location_id') <p class="mt-2 text-xs text-red-600">{{ $message }}</p> @enderror
-                        </div>
-
-                        <div>
-                            <label class="text-xs font-medium text-gray-700">Pendidikan</label>
-                            <select name="education_level_id"
-                                    @class([
-                                        'mt-2 w-full rounded-2xl border px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900/10 transition',
-                                        'border-red-300 bg-red-50 focus:border-red-300' => $errors->has('education_level_id'),
-                                        'border-gray-200 bg-white focus:border-gray-300' => !$errors->has('education_level_id'),
-                                    ])>
-                                <option value="">— Pilih —</option>
-                                @foreach($educationLevels as $e)
-                                    <option value="{{ $e->id }}" @selected((string) old('education_level_id') === (string) $e->id)>{{ $e->nama }}</option>
-                                @endforeach
-                            </select>
-                            @error('education_level_id') <p class="mt-2 text-xs text-red-600">{{ $message }}</p> @enderror
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label class="text-xs font-medium text-gray-700">Tipe</label>
-                            <input type="text" name="tipe" value="{{ old('tipe') }}"
-                                   @class([
-                                       'mt-2 w-full rounded-2xl border px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900/10 transition',
-                                       'border-red-300 bg-red-50 focus:border-red-300' => $errors->has('tipe'),
-                                       'border-gray-200 bg-white focus:border-gray-300' => !$errors->has('tipe'),
-                                   ])
-                                   placeholder="Full-time / Part-time / Internship">
-                            @error('tipe') <p class="mt-2 text-xs text-red-600">{{ $message }}</p> @enderror
-                        </div>
-
-                        <div>
-                            <label class="text-xs font-medium text-gray-700">Level</label>
-                            <input type="text" name="level" value="{{ old('level') }}"
-                                   @class([
-                                       'mt-2 w-full rounded-2xl border px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900/10 transition',
-                                       'border-red-300 bg-red-50 focus:border-red-300' => $errors->has('level'),
-                                       'border-gray-200 bg-white focus:border-gray-300' => !$errors->has('level'),
-                                   ])
-                                   placeholder="Junior / Mid / Senior">
-                            @error('level') <p class="mt-2 text-xs text-red-600">{{ $message }}</p> @enderror
-                        </div>
-                    </div>
-                </div>
-
-                <div class="px-6 py-5 border-t border-b border-gray-200 bg-gray-50">
-                    <p class="text-sm font-semibold text-gray-900">Kompensasi & Timeline</p>
-                    <p class="mt-1 text-xs text-gray-600">Rentang gaji dan batas akhir lamaran.</p>
-                </div>
-
-                <div class="p-6 space-y-6">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label class="text-xs font-medium text-gray-700">Gaji Min</label>
-                            <input type="number" name="gaji_min" value="{{ old('gaji_min') }}"
-                                   @class([
-                                       'mt-2 w-full rounded-2xl border px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900/10 transition',
-                                       'border-red-300 bg-red-50 focus:border-red-300' => $errors->has('gaji_min'),
-                                       'border-gray-200 bg-white focus:border-gray-300' => !$errors->has('gaji_min'),
-                                   ])
-                                   min="0" placeholder="0">
-                            @error('gaji_min') <p class="mt-2 text-xs text-red-600">{{ $message }}</p> @enderror
-                        </div>
-
-                        <div>
-                            <label class="text-xs font-medium text-gray-700">Gaji Max</label>
-                            <input type="number" name="gaji_max" value="{{ old('gaji_max') }}"
-                                   @class([
-                                       'mt-2 w-full rounded-2xl border px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900/10 transition',
-                                       'border-red-300 bg-red-50 focus:border-red-300' => $errors->has('gaji_max'),
-                                       'border-gray-200 bg-white focus:border-gray-300' => !$errors->has('gaji_max'),
-                                   ])
-                                   min="0" placeholder="0">
-                            @error('gaji_max') <p class="mt-2 text-xs text-red-600">{{ $message }}</p> @enderror
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
-                        <div>
-                            <label class="text-xs font-medium text-gray-700">Deadline</label>
-                            <input type="date" name="deadline" value="{{ old('deadline') }}"
-                                   @class([
-                                       'mt-2 w-full rounded-2xl border px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900/10 transition',
-                                       'border-red-300 bg-red-50 focus:border-red-300' => $errors->has('deadline'),
-                                       'border-gray-200 bg-white focus:border-gray-300' => !$errors->has('deadline'),
-                                   ])>
-                            @error('deadline') <p class="mt-2 text-xs text-red-600">{{ $message }}</p> @enderror
-                        </div>
-
-                        <div class="rounded-3xl border border-gray-200 bg-white p-5">
-                            <p class="text-xs font-semibold text-gray-900">Tips</p>
-                            <p class="mt-2 text-xs text-gray-600">Tulis rentang gaji agar kandidat lebih tertarik. Deadline disarankan minimal 7 hari dari hari ini.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="px-6 py-5 border-t border-b border-gray-200 bg-gray-50">
-                    <p class="text-sm font-semibold text-gray-900">Deskripsi & Kualifikasi</p>
-                    <p class="mt-1 text-xs text-gray-600">Jelaskan tanggung jawab, kriteria kandidat, dan ekspektasi.</p>
-                </div>
-
-                <div class="p-6 space-y-6">
-                    <div>
-                        <label class="text-xs font-medium text-gray-700">Deskripsi</label>
-                        <textarea name="deskripsi" rows="6"
-                                  @class([
-                                      'mt-2 w-full rounded-2xl border px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900/10 transition',
-                                      'border-red-300 bg-red-50 focus:border-red-300' => $errors->has('deskripsi'),
-                                      'border-gray-200 bg-white focus:border-gray-300' => !$errors->has('deskripsi'),
-                                  ])
-                                  placeholder="Tulis gambaran peran, tanggung jawab, dan ruang lingkup pekerjaan.">{{ old('deskripsi') }}</textarea>
-                        @error('deskripsi') <p class="mt-2 text-xs text-red-600">{{ $message }}</p> @enderror
-                    </div>
-
-                    <div>
-                        <label class="text-xs font-medium text-gray-700">Kualifikasi</label>
-                        <textarea name="kualifikasi" rows="6"
-                                  @class([
-                                      'mt-2 w-full rounded-2xl border px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900/10 transition',
-                                      'border-red-300 bg-red-50 focus:border-red-300' => $errors->has('kualifikasi'),
-                                      'border-gray-200 bg-white focus:border-gray-300' => !$errors->has('kualifikasi'),
-                                  ])
-                                  placeholder="Tulis kualifikasi minimum dan nilai plus.">{{ old('kualifikasi') }}</textarea>
-                        @error('kualifikasi') <p class="mt-2 text-xs text-red-600">{{ $message }}</p> @enderror
-                    </div>
-
-                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                        <label class="inline-flex items-center gap-2">
-                            <input type="checkbox" name="is_active" value="1"
-                                   class="rounded border-gray-300 text-gray-900 shadow-sm focus:ring-gray-900"
-                                   @checked($defaultActive)>
-                            <span class="text-sm text-gray-700">Aktif</span>
-                        </label>
-
-                        <div class="rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-xs text-gray-600">
-                            Jika tidak aktif, lowongan tidak tampil di pencarian pelamar.
-                        </div>
-                    </div>
-                </div>
-
-                <div class="px-6 py-5 border-t border-gray-200 bg-white flex flex-col sm:flex-row sm:items-center sm:justify-end gap-3">
-                    <a href="{{ route('hrd.jobs.index') }}"
-                       class="inline-flex items-center justify-center rounded-2xl border border-gray-200 bg-white px-5 py-3 text-sm font-medium text-gray-900 hover:bg-gray-50 transition">
-                        Batal
-                    </a>
-
-                    <button type="submit"
-                            class="inline-flex items-center justify-center rounded-2xl bg-gray-900 px-5 py-3 text-sm font-medium text-white hover:bg-black transition shadow-sm">
-                        Simpan
-                    </button>
-                </div>
+                <button class="flex items-center gap-3 w-full px-4 py-3 text-gray-600 hover:text-red-600 transition">
+                    <span>🚪</span> Keluar
+                </button>
             </form>
         </div>
-    </div>
+    </aside>
 
+    <main class="flex-1 bg-[#4B4B4B] p-6 lg:p-10">
+        <header class="flex justify-between items-center mb-10 text-white">
+            <div>
+                <h1 class="text-4xl font-black uppercase tracking-tight">BUAT LOWONGAN</h1>
+                <p class="text-sm opacity-70">Publikasikan kesempatan kerja baru untuk talenta terbaik.</p>
+            </div>
+            <a href="{{ route('hrd.jobs.index') }}" class="text-sm font-bold border-b-2 border-white pb-1 hover:opacity-70 transition">
+                ← KEMBALI
+            </a>
+        </header>
+
+        @if($errors->any())
+            <div class="mb-8 p-4 bg-red-500 text-white rounded-2xl font-bold text-sm shadow-lg">
+                ⚠️ Ada beberapa kesalahan pada input Anda. Silakan periksa kembali.
+            </div>
+        @endif
+
+        <form method="POST" action="{{ route('hrd.jobs.store') }}">
+            @csrf
+            
+            <div class="space-y-8">
+                <div class="bg-[#D1D5DB] rounded-[40px] p-8 shadow-inner">
+                    <h2 class="text-xl font-black text-gray-900 mb-6 uppercase tracking-tight">1. Informasi Utama</h2>
+                    <div class="bg-white rounded-[32px] p-8 space-y-6 shadow-sm">
+                        <div>
+                            <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Judul Pekerjaan</label>
+                            <input type="text" name="judul" value="{{ old('judul') }}"
+                                   class="mt-2 w-full rounded-2xl border-2 border-gray-100 bg-gray-50 px-5 py-4 text-sm font-bold text-gray-900 focus:border-[#3498DB] focus:bg-white focus:outline-none transition"
+                                   placeholder="Contoh: Senior UI/UX Designer" required>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div>
+                                <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Kategori</label>
+                                <select name="job_category_id" class="mt-2 w-full rounded-2xl border-2 border-gray-100 bg-gray-50 px-5 py-4 text-sm font-bold text-gray-900 focus:border-[#3498DB] focus:outline-none transition">
+                                    <option value="">Pilih Kategori</option>
+                                    @foreach($categories as $c)
+                                        <option value="{{ $c->id }}" @selected(old('job_category_id') == $c->id)>{{ $c->nama }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Lokasi</label>
+                                <select name="job_location_id" class="mt-2 w-full rounded-2xl border-2 border-gray-100 bg-gray-50 px-5 py-4 text-sm font-bold text-gray-900 focus:border-[#3498DB] focus:outline-none transition">
+                                    <option value="">Pilih Lokasi</option>
+                                    @foreach($locations as $l)
+                                        <option value="{{ $l->id }}" @selected(old('job_location_id') == $l->id)>{{ $l->nama }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Pendidikan</label>
+                                <select name="education_level_id" class="mt-2 w-full rounded-2xl border-2 border-gray-100 bg-gray-50 px-5 py-4 text-sm font-bold text-gray-900 focus:border-[#3498DB] focus:outline-none transition">
+                                    <option value="">Minimal Pendidikan</option>
+                                    @foreach($educationLevels as $e)
+                                        <option value="{{ $e->id }}" @selected(old('education_level_id') == $e->id)>{{ $e->nama }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Tipe Pekerjaan</label>
+                                <input type="text" name="tipe" value="{{ old('tipe') }}" placeholder="Full-time, Contract, Freelance"
+                                       class="mt-2 w-full rounded-2xl border-2 border-gray-100 bg-gray-50 px-5 py-4 text-sm font-bold text-gray-900 focus:border-[#3498DB] focus:outline-none transition">
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Level Jabatan</label>
+                                <input type="text" name="level" value="{{ old('level') }}" placeholder="Entry, Mid, Senior"
+                                       class="mt-2 w-full rounded-2xl border-2 border-gray-100 bg-gray-50 px-5 py-4 text-sm font-bold text-gray-900 focus:border-[#3498DB] focus:outline-none transition">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-[#D1D5DB] rounded-[40px] p-8 shadow-inner">
+                    <h2 class="text-xl font-black text-gray-900 mb-6 uppercase tracking-tight">2. Kompensasi & Batas Waktu</h2>
+                    <div class="bg-white rounded-[32px] p-8 grid grid-cols-1 md:grid-cols-3 gap-6 shadow-sm">
+                        <div>
+                            <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Gaji Minimal</label>
+                            <input type="number" name="gaji_min" value="{{ old('gaji_min') }}" placeholder="Rp 0"
+                                   class="mt-2 w-full rounded-2xl border-2 border-gray-100 bg-gray-50 px-5 py-4 text-sm font-bold text-gray-900 focus:border-[#3498DB] focus:outline-none transition">
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Gaji Maksimal</label>
+                            <input type="number" name="gaji_max" value="{{ old('gaji_max') }}" placeholder="Rp 0"
+                                   class="mt-2 w-full rounded-2xl border-2 border-gray-100 bg-gray-50 px-5 py-4 text-sm font-bold text-gray-900 focus:border-[#3498DB] focus:outline-none transition">
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Batas Lamaran</label>
+                            <input type="date" name="deadline" value="{{ old('deadline') }}"
+                                   class="mt-2 w-full rounded-2xl border-2 border-gray-100 bg-gray-50 px-5 py-4 text-sm font-bold text-gray-900 focus:border-[#3498DB] focus:outline-none transition">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-[#D1D5DB] rounded-[40px] p-8 shadow-inner">
+                    <h2 class="text-xl font-black text-gray-900 mb-6 uppercase tracking-tight">3. Deskripsi & Kualifikasi</h2>
+                    <div class="bg-white rounded-[32px] p-8 space-y-6 shadow-sm">
+                        <div>
+                            <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Deskripsi Pekerjaan</label>
+                            <textarea name="deskripsi" rows="6" 
+                                      class="mt-2 w-full rounded-2xl border-2 border-gray-100 bg-gray-50 px-5 py-4 text-sm font-bold text-gray-900 focus:border-[#3498DB] focus:outline-none transition"
+                                      placeholder="Jelaskan peran dan tanggung jawab pekerjaan ini...">{{ old('deskripsi') }}</textarea>
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Kualifikasi Kandidat</label>
+                            <textarea name="kualifikasi" rows="6" 
+                                      class="mt-2 w-full rounded-2xl border-2 border-gray-100 bg-gray-50 px-5 py-4 text-sm font-bold text-gray-900 focus:border-[#3498DB] focus:outline-none transition"
+                                      placeholder="Sebutkan keahlian atau syarat khusus yang dibutuhkan...">{{ old('kualifikasi') }}</textarea>
+                        </div>
+
+                        <div class="flex items-center justify-between p-4 bg-gray-50 rounded-2xl border-2 border-dashed border-gray-200">
+                            <div class="flex items-center gap-3">
+                                <input type="checkbox" name="is_active" value="1" id="is_active"
+                                       class="w-5 h-5 rounded border-gray-300 text-[#3498DB] focus:ring-[#3498DB]"
+                                       @checked($defaultActive)>
+                                <label for="is_active" class="text-sm font-black text-gray-900 uppercase">Tampilkan Lowongan Sekarang</label>
+                            </div>
+                            <span class="text-[10px] font-bold text-gray-400 italic">OFF / ON</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-end gap-4 pb-10">
+                    <button type="submit" class="bg-[#3498DB] hover:bg-blue-600 text-white font-black px-12 py-5 rounded-2xl shadow-xl transform active:scale-95 transition-all uppercase tracking-widest text-sm">
+                        Publish Lowongan
+                    </button>
+                </div>
+            </div>
+        </form>
+
+        <footer class="mt-4 text-center text-gray-400 text-xs py-6">
+            © 2026, Sistem Informasi Karier dan Portofolio (SIKAP)
+        </footer>
+    </main>
+</div>
 @endsection

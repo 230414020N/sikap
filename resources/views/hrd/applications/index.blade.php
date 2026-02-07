@@ -4,242 +4,135 @@
     @php
         $statusClass = function ($status) {
             $s = strtolower((string) $status);
-
-            if (str_contains($s, 'diterima') || str_contains($s, 'lolos') || str_contains($s, 'accepted') || str_contains($s, 'hire')) {
-                return 'border-green-200 bg-green-50 text-green-800';
+            if (str_contains($s, 'ditinjau') || str_contains($s, 'proses')) {
+                return 'bg-[#98e998] text-gray-700'; // Hijau muda sesuai gambar
             }
-
-            if (str_contains($s, 'ditolak') || str_contains($s, 'gagal') || str_contains($s, 'rejected') || str_contains($s, 'reject')) {
-                return 'border-red-200 bg-red-50 text-red-800';
-            }
-
             if (str_contains($s, 'interview') || str_contains($s, 'wawancara')) {
-                return 'border-blue-200 bg-blue-50 text-blue-800';
+                return 'bg-[#ffe7a5] text-gray-700'; // Kuning sesuai gambar
             }
-
-            if (str_contains($s, 'review') || str_contains($s, 'diproses') || str_contains($s, 'proses') || str_contains($s, 'screen')) {
-                return 'border-amber-200 bg-amber-50 text-amber-800';
+            if (str_contains($s, 'ditolak')) {
+                return 'bg-[#f46b6b] text-white'; // Merah sesuai gambar
             }
-
-            return 'border-gray-200 bg-gray-50 text-gray-800';
+            return 'bg-gray-200 text-gray-700';
         };
 
         $total = method_exists($applications, 'total') ? $applications->total() : (is_countable($applications) ? count($applications) : 0);
-        $jobSelected = (string) request('job_id', '');
-        $statusSelected = (string) request('status', '');
-        $hasFilters = (string) request()->getQueryString() !== '';
     @endphp
 
-    <div class="min-h-screen bg-gray-50">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-            <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-                <div>
-                    <h1 class="text-2xl font-semibold tracking-tight text-gray-900">Lamaran Masuk</h1>
-                    <p class="mt-1 text-sm text-gray-600">Search & filter kandidat berdasarkan pendidikan, pengalaman, dan keyword.</p>
-                </div>
-
-                <div class="flex items-center gap-2">
-                    <div class="rounded-2xl border border-gray-200 bg-white px-4 py-2.5 text-sm text-gray-700">
-                        Total: <span class="font-semibold text-gray-900">{{ $total }}</span>
-                    </div>
-
-                    @if($hasFilters)
-                        <a href="{{ route('hrd.applications.index') }}"
-                           class="inline-flex items-center justify-center rounded-2xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-medium text-gray-900 hover:bg-gray-50 transition">
-                            Reset
-                        </a>
-                    @endif
-                </div>
+    <div class="min-h-screen bg-[#4b4b4b] p-4 sm:p-8">
+        <div class="max-w-6xl mx-auto">
+            
+            <div class="mb-6">
+                <h1 class="text-white text-4xl font-bold uppercase tracking-tight">Lamaran Masuk</h1>
             </div>
 
-            @if(session('success'))
-                <div class="mt-6">
-                    <x-alert type="success">{{ session('success') }}</x-alert>
-                </div>
-            @endif
-
-            @if($errors->any())
-                <div class="mt-6">
-                    <x-alert type="error">Input filter belum valid.</x-alert>
-                </div>
-            @endif
-
-            <div class="mt-8 bg-white border border-gray-200 rounded-3xl shadow-sm overflow-hidden">
-                <div class="px-6 py-5 border-b border-gray-200">
-                    <p class="text-sm font-semibold text-gray-900">Filter</p>
-                    <p class="mt-1 text-xs text-gray-600">Pilih lowongan, status, dan detail kandidat untuk mempersempit hasil.</p>
-                </div>
-
-                <form method="GET" action="{{ route('hrd.applications.index') }}" class="p-6 grid grid-cols-1 sm:grid-cols-12 gap-4">
-                    <div class="sm:col-span-4">
-                        <label class="text-xs font-medium text-gray-700">Keyword</label>
+            <div class="bg-white rounded-3xl p-8 shadow-xl">
+                
+                <div class="mb-8 bg-[#f0f0f0] rounded-2xl p-6">
+                    <h2 class="text-lg font-bold text-gray-800 mb-4">Cari Lamaran</h2>
+                    <form method="GET" action="{{ route('hrd.applications.index') }}" class="relative">
                         <input type="text" name="q" value="{{ request('q') }}"
-                               class="mt-2 w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-900/10 focus:border-gray-300 transition"
-                               placeholder="Nama / email / jurusan / lowongan / portofolio">
-                    </div>
-
-                    <div class="sm:col-span-4">
-                        <label class="text-xs font-medium text-gray-700">Lowongan</label>
-                        <select name="job_id"
-                                class="mt-2 w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10 focus:border-gray-300 transition">
-                            <option value="">Semua lowongan</option>
-                            @foreach($jobs as $j)
-                                <option value="{{ $j->id }}" @selected((string) $j->id === $jobSelected)>{{ $j->judul }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <div class="sm:col-span-2">
-                        <label class="text-xs font-medium text-gray-700">Status</label>
-                        <select name="status"
-                                class="mt-2 w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10 focus:border-gray-300 transition">
-                            <option value="">Semua status</option>
-                            @foreach($statusOptions as $st)
-                                <option value="{{ $st }}" @selected((string) $st === $statusSelected)>{{ $st }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <div class="sm:col-span-2">
-                        <label class="text-xs font-medium text-gray-700">Urutkan</label>
-                        <select name="sort"
-                                class="mt-2 w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10 focus:border-gray-300 transition">
-                            <option value="latest" @selected((request('sort') ?? 'latest') === 'latest')>Terbaru</option>
-                            <option value="oldest" @selected(request('sort') === 'oldest')>Terlama</option>
-                        </select>
-                    </div>
-
-                    <div class="sm:col-span-3">
-                        <label class="text-xs font-medium text-gray-700">Pendidikan</label>
-                        <input type="text" name="pendidikan" value="{{ request('pendidikan') }}"
-                               class="mt-2 w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-900/10 focus:border-gray-300 transition"
-                               placeholder="Contoh: S1">
-                    </div>
-
-                    <div class="sm:col-span-3">
-                        <label class="text-xs font-medium text-gray-700">Jurusan</label>
-                        <input type="text" name="jurusan" value="{{ request('jurusan') }}"
-                               class="mt-2 w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-900/10 focus:border-gray-300 transition"
-                               placeholder="Contoh: Teknik Informatika">
-                    </div>
-
-                    <div class="sm:col-span-3">
-                        <label class="text-xs font-medium text-gray-700">Institusi</label>
-                        <input type="text" name="institusi" value="{{ request('institusi') }}"
-                               class="mt-2 w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-900/10 focus:border-gray-300 transition"
-                               placeholder="Nama kampus/sekolah">
-                    </div>
-
-                    <div class="sm:col-span-2">
-                        <label class="text-xs font-medium text-gray-700">Tahun Lulus</label>
-                        <input type="number" name="tahun_lulus" value="{{ request('tahun_lulus') }}"
-                               class="mt-2 w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-900/10 focus:border-gray-300 transition"
-                               placeholder="2024">
-                    </div>
-
-                    <div class="sm:col-span-4">
-                        <label class="text-xs font-medium text-gray-700">Pengalaman</label>
-                        <input type="text" name="pengalaman" value="{{ request('pengalaman') }}"
-                               class="mt-2 w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-900/10 focus:border-gray-300 transition"
-                               placeholder="Keyword pengalaman (bio/portofolio)">
-                    </div>
-
-                    <div class="sm:col-span-12 flex flex-col sm:flex-row sm:justify-end gap-2 pt-2">
-                        <a href="{{ route('hrd.applications.index') }}"
-                           class="inline-flex items-center justify-center rounded-2xl border border-gray-200 bg-white px-5 py-3 text-sm font-medium text-gray-900 hover:bg-gray-50 transition">
-                            Reset
-                        </a>
-                        <button type="submit"
-                                class="inline-flex items-center justify-center rounded-2xl bg-gray-900 px-5 py-3 text-sm font-medium text-white hover:bg-black transition shadow-sm">
-                            Terapkan
+                               class="w-full bg-white border-none rounded-2xl py-4 px-6 pr-12 text-sm shadow-sm focus:ring-2 focus:ring-blue-400"
+                               placeholder="Cari nama, posisi, atau kata kunci lainnya...">
+                        <button type="submit" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
                         </button>
+
+                        @if(request('job_id') || request('status') || request('pendidikan'))
+                            <div class="mt-4 flex flex-wrap gap-2">
+                                <span class="text-xs font-medium text-gray-500 italic">Filter Aktif:</span>
+                                <a href="{{ route('hrd.applications.index') }}" class="text-xs text-blue-600 font-bold hover:underline">Hapus Semua Filter</a>
+                            </div>
+                        @endif
+                    </form>
+                </div>
+
+                <div class="bg-[#f0f0f0] rounded-2xl p-6">
+    <h2 class="text-lg font-bold text-gray-800 mb-4">Daftar Lamaran</h2>
+    
+    <div class="overflow-x-auto">
+        <table class="w-full text-center border-collapse">
+            <thead>
+                <tr class="text-gray-800 font-bold border-b border-gray-400">
+                    <th class="py-4 px-2 w-16">No</th>
+                    <th class="py-4 px-4 text-left border-l border-gray-400">Nama Lengkap</th>
+                    <th class="py-4 px-4 border-l border-gray-400">Posisi</th>
+                    <th class="py-4 px-4 border-l border-gray-400">Pendidikan</th>
+                    <th class="py-4 px-4 border-l border-gray-400">Status</th>
+                    <th class="py-4 px-4 border-l border-gray-400 w-40">Aksi</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-300">
+                @forelse($applications as $index => $a)
+                    <tr class="text-sm text-gray-900 font-medium">
+                        <td class="py-4">{{ $applications->firstItem() + $index }}</td>
+                        <td class="py-4 px-4 text-left border-l border-gray-300">{{ $a->pelamar?->name }}</td>
+                        <td class="py-4 px-4 border-l border-gray-300">{{ $a->job->judul }}</td>
+                        <td class="py-4 px-4 border-l border-gray-300">{{ $a->pelamar?->pendidikan ?? 'S1' }}</td>
+                        <td class="py-4 px-4 border-l border-gray-300">
+                            <span class="inline-block px-6 py-1 rounded-full text-[10px] font-bold uppercase {{ $statusClass($a->status) }}">
+                                {{ $a->status }}
+                            </span>
+                        </td>
+                        <td class="py-4 px-4 border-l border-gray-300 text-center">
+                            <a href="{{ route('hrd.applications.show', $a->id) }}" 
+                               class="bg-[#4d79ff] text-white px-4 py-2 rounded-lg text-[11px] font-bold flex items-center justify-center gap-2 hover:bg-blue-600 transition mx-auto w-fit">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                                    <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                                    <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
+                                </svg>
+                                Lihat Detail
+                            </a>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="6" class="py-10 text-gray-500 italic">Belum ada lamaran masuk.</td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
+</div>
+                    <div class="mt-6 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-gray-300 pt-6">
+                        <p class="text-sm font-bold text-gray-700 uppercase">
+                            Menampilkan {{ $applications->firstItem() ?? 0 }} - {{ $applications->lastItem() ?? 0 }} dari {{ $total }} Lamaran
+                        </p>
+                        
+                        <div class="sikap-pagination">
+                            {{ $applications->links() }}
+                        </div>
                     </div>
-                </form>
-            </div>
-
-            <div class="mt-6 bg-white border border-gray-200 rounded-3xl shadow-sm overflow-hidden">
-                <div class="px-6 py-5 border-b border-gray-200 flex items-center justify-between">
-                    <p class="text-sm font-semibold text-gray-900">Daftar Kandidat</p>
-                    <p class="text-xs text-gray-500">Menampilkan hasil sesuai filter</p>
-                </div>
-
-                <div class="hidden sm:block">
-                    <table class="w-full text-sm">
-                        <thead class="bg-gray-50 text-gray-600">
-                            <tr>
-                                <th class="text-left px-6 py-3 font-medium">Kandidat</th>
-                                <th class="text-left px-6 py-3 font-medium">Lowongan</th>
-                                <th class="text-left px-6 py-3 font-medium">Status</th>
-                                <th class="text-left px-6 py-3 font-medium">Tanggal</th>
-                                <th class="text-right px-6 py-3 font-medium">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @forelse($applications as $a)
-                                <tr class="border-t border-gray-200">
-                                    <td class="px-6 py-4">
-                                        <p class="font-medium text-gray-900">{{ $a->pelamar->name }}</p>
-                                        <p class="text-xs text-gray-600">{{ $a->pelamar->email }}</p>
-                                    </td>
-                                    <td class="px-6 py-4 text-gray-900">{{ $a->job->judul }}</td>
-                                    <td class="px-6 py-4">
-                                        <span class="inline-flex text-xs px-3 py-1 rounded-full border font-medium {{ $statusClass($a->status) }}">
-                                            {{ $a->status }}
-                                        </span>
-                                    </td>
-                                    <td class="px-6 py-4 text-gray-600">{{ $a->created_at->format('d M Y') }}</td>
-                                    <td class="px-6 py-4 text-right">
-                                        <a href="{{ route('hrd.applications.show', $a->id) }}"
-                                           class="text-gray-900 underline underline-offset-4 hover:text-gray-700">
-                                            Detail
-                                        </a>
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="5" class="px-6 py-10 text-center text-gray-600">
-                                        Tidak ada data yang cocok.
-                                    </td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="sm:hidden divide-y divide-gray-200">
-                    @forelse($applications as $a)
-                        <div class="px-6 py-5">
-                            <div class="flex items-start justify-between gap-3">
-                                <div class="min-w-0">
-                                    <p class="text-sm font-semibold text-gray-900 truncate">{{ $a->pelamar->name }}</p>
-                                    <p class="mt-1 text-xs text-gray-600 truncate">{{ $a->pelamar->email }}</p>
-                                </div>
-                                <span class="shrink-0 inline-flex text-xs px-3 py-1 rounded-full border font-medium {{ $statusClass($a->status) }}">
-                                    {{ $a->status }}
-                                </span>
-                            </div>
-
-                            <p class="mt-3 text-sm text-gray-900 font-medium truncate">{{ $a->job->judul }}</p>
-
-                            <div class="mt-3 flex items-center justify-between">
-                                <p class="text-xs text-gray-500">{{ $a->created_at->format('d M Y') }}</p>
-                                <a href="{{ route('hrd.applications.show', $a->id) }}"
-                                   class="text-sm text-gray-900 underline underline-offset-4 hover:text-gray-700">
-                                    Detail
-                                </a>
-                            </div>
-                        </div>
-                    @empty
-                        <div class="px-6 py-10 text-center text-gray-600">
-                            Tidak ada data yang cocok.
-                        </div>
-                    @endforelse
                 </div>
             </div>
 
-            <div class="mt-6">
-                {{ $applications->links() }}
+            <div class="mt-12 text-center text-gray-400 text-sm pb-8 flex items-center justify-center gap-2">
+                <span class="text-xl">©</span>
+                <p>2025, Sistem Informasi Karier dan Portofolio</p>
             </div>
         </div>
     </div>
+
+    <style>
+    /* Reset gaya pagination Laravel agar jadi kotak minimalis sesuai gambar */
+    .sikap-pagination-container nav div:first-child { display: none; } /* Sembunyikan info text bawaan laravel */
+    .sikap-pagination-container nav div:last-child { margin-top: 0; box-shadow: none; }
+    .sikap-pagination-container span[aria-current="page"] span {
+        background-color: #333 !important;
+        color: white !important;
+        border-color: #333 !important;
+    }
+    .sikap-pagination-container a, .sikap-pagination-container span {
+        border-radius: 4px !important;
+        padding: 6px 12px !important;
+        font-weight: bold !important;
+        border: 1px solid #333 !important;
+        color: #333 !important;
+    }
+    .sikap-pagination-container a:hover {
+        background-color: #f0f0f0 !important;
+    }
+</style>
 @endsection

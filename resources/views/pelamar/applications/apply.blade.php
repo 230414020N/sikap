@@ -1,252 +1,132 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="min-h-screen bg-gray-50">
-        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-            <div class="flex items-start justify-between gap-6 mb-8">
-                <div>
-                    <h1 class="text-2xl font-semibold text-gray-900">Ajukan Lamaran</h1>
-                    <p class="mt-1 text-sm text-gray-600">
-                        {{ $job->judul }} • {{ $job->company->nama }}
-                        @if($job->lokasi) • {{ $job->lokasi }} @endif
-                    </p>
-                </div>
+<div class="flex min-h-screen bg-[#E5E7EB]">
+    <aside class="w-64 bg-[#E5E7EB] border-r border-gray-300 hidden md:flex flex-col p-6 sticky top-0 h-screen">
+        <div class="mb-10 px-2 font-bold text-2xl tracking-tighter italic text-gray-900">
+            SIKAP<span class="text-xs font-normal align-top not-italic">.</span>
+        </div>
+        <nav class="flex-1 space-y-2 text-sm font-medium">
+            <a href="{{ route('pelamar.jobs.index') }}" class="flex items-center gap-3 rounded-xl px-4 py-3 bg-[#4B4B4B] text-white shadow-md transition">
+                <span>🔍</span> Cari Lowongan
+            </a>
+            <a href="{{ route('pelamar.profile.show') }}" class="flex items-center gap-3 rounded-xl px-4 py-3 text-gray-600 hover:bg-gray-200 transition">
+                <span>👤</span> Profil Saya
+            </a>
+        </nav>
+    </aside>
 
-                <a href="{{ route('pelamar.jobs.show', $job->id) }}"
-                   class="text-sm text-gray-900 underline underline-offset-4 hover:text-gray-700">
-                    ← Kembali
-                </a>
+    <main class="flex-1 bg-[#4B4B4B] p-6 lg:p-10 overflow-y-auto">
+        <header class="flex justify-between items-center mb-10 text-white">
+            <div>
+                <h1 class="text-2xl font-black uppercase tracking-tight">Kirim Lamaran</h1>
+                <p class="text-sm opacity-70">Langkah terakhir sebelum impianmu jadi nyata.</p>
+            </div>
+            <a href="{{ route('pelamar.jobs.show', $job->id) }}" class="text-xs font-bold uppercase tracking-widest hover:text-[#00D1A0] transition">
+                ← Kembali ke Detail
+            </a>
+        </header>
+
+        <div class="max-w-4xl mx-auto bg-[#D1D5DB] rounded-[40px] p-8 lg:p-12 shadow-2xl space-y-8">
+            
+            <div class="bg-white rounded-[32px] p-8 shadow-sm">
+                <div class="flex flex-col md:flex-row justify-between gap-6">
+                    <div>
+                        <span class="text-[10px] font-black uppercase tracking-[0.2em] text-[#00D1A0] mb-2 block">Anda Melamar Untuk:</span>
+                        <h2 class="text-3xl font-black text-gray-900 leading-tight">{{ $job->judul }}</h2>
+                        <p class="text-gray-500 font-bold text-lg italic">{{ $job->company->nama }}</p>
+                    </div>
+                    <div class="flex flex-wrap gap-2 content-start">
+                        <span class="px-4 py-1.5 bg-gray-900 text-white rounded-full text-[10px] font-bold uppercase">{{ $job->tipe }}</span>
+                        <span class="px-4 py-1.5 bg-emerald-100 text-emerald-700 rounded-full text-[10px] font-bold uppercase">{{ $job->lokasi }}</span>
+                    </div>
+                </div>
             </div>
 
             @if($errors->any())
-                <x-alert type="error" class="mb-6">
-                    Ada beberapa input yang belum valid. Coba cek lagi ya.
-                </x-alert>
+                <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-xl text-red-700 text-sm">
+                    ⚠️ Ada beberapa input yang belum valid. Mohon periksa kembali.
+                </div>
             @endif
 
-            <div class="bg-white border border-gray-200 rounded-2xl shadow-sm p-6 space-y-6">
-                {{-- Ringkasan lowongan --}}
-                <div class="rounded-2xl border border-gray-200 p-5">
-                    <div class="flex flex-wrap gap-2">
-                        @foreach([$job->tipe, $job->level, $job->kategori] as $tag)
-                            @if($tag)
-                                <span class="text-xs px-3 py-1 rounded-full bg-gray-100 text-gray-700">
-                                    {{ $tag }}
-                                </span>
+            <div class="bg-white rounded-[32px] p-8 shadow-sm space-y-6">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-xl font-bold text-gray-900 flex items-center gap-2">
+                        <span class="w-1.5 h-6 bg-[#00D1A0] rounded-full"></span> Lampiran Dokumen
+                    </h3>
+                    <a href="/pelamar/profile" class="text-xs font-bold text-[#00D1A0] hover:underline uppercase">Kelola Profil →</a>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="p-6 rounded-2xl border-2 {{ $profile?->cv_path ? 'border-emerald-100 bg-emerald-50/30' : 'border-dashed border-gray-300' }}">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-xs font-bold uppercase text-gray-400">Curriculum Vitae</span>
+                            @if($profile?->cv_path)
+                                <span class="text-[10px] font-bold bg-emerald-500 text-white px-2 py-0.5 rounded">READY</span>
+                            @else
+                                <span class="text-[10px] font-bold bg-red-500 text-white px-2 py-0.5 rounded">MISSING</span>
                             @endif
-                        @endforeach
+                        </div>
+                        <p class="text-sm font-black text-gray-800 tracking-tight">{{ $profile?->cv_path ? 'CV_Utama.pdf' : 'Belum diunggah' }}</p>
                     </div>
 
-                    <div class="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
-                        <div>
-                            <p class="text-xs text-gray-500">Deadline</p>
-                            <p class="mt-1 font-medium text-gray-900">
-                                @if($job->deadline)
-                                    {{ \Carbon\Carbon::parse($job->deadline)->format('d M Y') }}
-                                @else
-                                    —
-                                @endif
-                            </p>
+                    <div class="p-6 rounded-2xl border-2 {{ $portofolios->count() > 0 ? 'border-emerald-100 bg-emerald-50/30' : 'border-dashed border-gray-300' }}">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-xs font-bold uppercase text-gray-400">Portofolio</span>
+                            <span class="text-[10px] font-bold bg-gray-900 text-white px-2 py-0.5 rounded">{{ $portofolios->count() }} ITEMS</span>
                         </div>
-
-                        <div>
-                            <p class="text-xs text-gray-500">Rentang Gaji</p>
-                            <p class="mt-1 font-medium text-gray-900">
-                                @if($job->gaji_min || $job->gaji_max)
-                                    {{ $job->gaji_min ? number_format($job->gaji_min, 0, ',', '.') : '—' }}
-                                    -
-                                    {{ $job->gaji_max ? number_format($job->gaji_max, 0, ',', '.') : '—' }}
-                                @else
-                                    —
-                                @endif
-                            </p>
-                        </div>
-
-                        <div>
-                            <p class="text-xs text-gray-500">Perusahaan</p>
-                            <p class="mt-1 font-medium text-gray-900">{{ $job->company->nama }}</p>
-                        </div>
+                        <p class="text-sm font-black text-gray-800 tracking-tight">Portofolio akan dilampirkan otomatis</p>
                     </div>
                 </div>
+            </div>
 
-                {{-- Info lampiran --}}
-                <x-alert type="info">
-                    Sistem akan melampirkan <span class="font-medium">dokumen (CV & surat lamaran)</span> dan
-                    <span class="font-medium">portofolio</span> kamu secara otomatis saat lamaran dikirim.
-                </x-alert>
-
-                <div class="bg-gray-50 border border-gray-200 rounded-2xl p-5 space-y-5">
-                    {{-- Dokumen --}}
-                    <div>
-                        <div class="flex items-center justify-between gap-4">
-                            <div>
-                                <p class="text-sm font-semibold text-gray-900">Dokumen</p>
-                                <p class="mt-1 text-xs text-gray-600">Diambil dari halaman Profil.</p>
-                            </div>
-
-                            <a href="{{ route('pelamar.profile.edit') }}"
-                               class="text-xs text-gray-900 underline underline-offset-4 hover:text-gray-700">
-                                Kelola Profil
-                            </a>
-                        </div>
-
-                        <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
-                            {{-- CV --}}
-                            <div class="rounded-xl border border-gray-200 bg-white p-4 flex items-center justify-between">
-                                <div>
-                                    <p class="text-sm font-medium text-gray-900">CV</p>
-                                    <p class="mt-1 text-xs text-gray-600">PDF/DOC, max 10MB</p>
-                                </div>
-
-                                @if($profile?->cv_path)
-                                    <span class="text-xs px-3 py-1 rounded-full bg-gray-100 text-gray-800 font-medium">
-                                        Ada
-                                    </span>
-                                @else
-                                    <span class="text-xs px-3 py-1 rounded-full bg-red-600 text-white font-medium">
-                                        Belum ada
-                                    </span>
-                                @endif
-                            </div>
-
-                            {{-- Surat Lamaran --}}
-                            <div class="rounded-xl border border-gray-200 bg-white p-4 flex items-center justify-between">
-                                <div>
-                                    <p class="text-sm font-medium text-gray-900">Surat Lamaran</p>
-                                    <p class="mt-1 text-xs text-gray-600">PDF/DOC, max 10MB</p>
-                                </div>
-
-                                @if($profile?->surat_lamaran_path)
-                                    <span class="text-xs px-3 py-1 rounded-full bg-gray-100 text-gray-800 font-medium">
-                                        Ada
-                                    </span>
-                                @else
-                                    <span class="text-xs px-3 py-1 rounded-full bg-red-600 text-white font-medium">
-                                        Belum ada
-                                    </span>
-                                @endif
-                            </div>
-                        </div>
-
-                        @if(!$profile?->cv_path || !$profile?->surat_lamaran_path)
-                            <p class="mt-3 text-xs text-gray-600">
-                                Kamu tetap bisa mengirim lamaran, tapi disarankan lengkapi dokumen dulu di
-                                <a class="underline underline-offset-4" href="{{ route('pelamar.profile.edit') }}">Profil</a>.
-                            </p>
-                        @endif
-                    </div>
-
-                    {{-- Portofolio --}}
-                    <div class="border-t border-gray-200 pt-5">
-                        <div class="flex items-center justify-between gap-4">
-                            <div>
-                                <p class="text-sm font-semibold text-gray-900">Portofolio</p>
-                                <p class="mt-1 text-xs text-gray-600">
-                                    Yang dilampirkan otomatis: <span class="font-medium text-gray-900">{{ $portofolios->count() }}</span> item.
-                                </p>
-                            </div>
-
-                            <a href="{{ route('pelamar.portofolio.index') }}"
-                               class="text-xs text-gray-900 underline underline-offset-4 hover:text-gray-700">
-                                Kelola Portofolio
-                            </a>
-                        </div>
-
-                        @if($portofolios->isEmpty())
-                            <div class="mt-4 rounded-xl border border-gray-200 bg-white p-4">
-                                <p class="text-sm text-gray-700">
-                                    Kamu belum punya portofolio. Portofolio opsional, tapi bisa membantu HRD menilai kamu lebih cepat.
-                                </p>
-                                <a href="{{ route('pelamar.portofolio.create') }}"
-                                   class="mt-3 inline-flex items-center rounded-xl bg-black px-4 py-2 text-sm font-medium text-white hover:bg-gray-900 transition">
-                                    + Tambah Portofolio
-                                </a>
-                            </div>
-                        @else
-                            <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                @foreach($portofolios as $p)
-                                    <div class="rounded-2xl border border-gray-200 bg-white overflow-hidden">
-                                        <div class="flex">
-                                            <div class="w-24 h-24 bg-gray-100 flex-shrink-0 overflow-hidden">
-                                                @if($p->thumbnail_path)
-                                                    <img src="{{ asset('storage/' . $p->thumbnail_path) }}"
-                                                         alt="{{ $p->judul }}"
-                                                         class="w-full h-full object-cover">
-                                                @else
-                                                    <div class="w-full h-full flex items-center justify-center text-xs text-gray-400">
-                                                        No Thumbnail
-                                                    </div>
-                                                @endif
-                                            </div>
-
-                                            <div class="p-4 min-w-0 flex-1">
-                                                <p class="text-sm font-semibold text-gray-900 truncate">{{ $p->judul }}</p>
-                                                <p class="mt-1 text-xs text-gray-600">
-                                                    {{ $p->kategori ?? 'Tanpa kategori' }}
-                                                    @if($p->tools) • {{ $p->tools }} @endif
-                                                </p>
-
-                                                <div class="mt-3 flex flex-wrap gap-2">
-                                                    @if($p->link_demo)
-                                                        <a href="{{ $p->link_demo }}" target="_blank"
-                                                           class="text-xs rounded-full border border-gray-300 px-3 py-1 hover:bg-gray-50">
-                                                            Demo
-                                                        </a>
-                                                    @endif
-                                                    @if($p->link_github)
-                                                        <a href="{{ $p->link_github }}" target="_blank"
-                                                           class="text-xs rounded-full border border-gray-300 px-3 py-1 hover:bg-gray-50">
-                                                            GitHub
-                                                        </a>
-                                                    @endif
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        @if($p->deskripsi)
-                                            <div class="px-4 pb-4">
-                                                <p class="text-sm text-gray-700">
-                                                    {{ \Illuminate\Support\Str::limit($p->deskripsi, 110) }}
-                                                </p>
-                                            </div>
-                                        @endif
-                                    </div>
-                                @endforeach
-                            </div>
-                        @endif
-                    </div>
-                </div>
-
-                {{-- Form --}}
-                <form action="{{ route('pelamar.jobs.apply', $job->id) }}" method="POST" class="space-y-6"
-                      onsubmit="return confirm('Kirim lamaran untuk lowongan ini sekarang?')">
+            <div class="bg-white rounded-[32px] p-8 shadow-sm">
+                <form action="{{ route('pelamar.jobs.apply', $job->id) }}" method="POST" onsubmit="return confirm('Kirim lamaran sekarang?')">
                     @csrf
-
-                    <div class="space-y-2">
-                        <label class="text-sm font-medium text-gray-900">Catatan untuk HRD (opsional)</label>
-                        <textarea name="catatan_pelamar" rows="5"
-                            class="w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-900
-                            focus:outline-none focus:ring-2 focus:ring-black focus:border-black transition"
-                            placeholder="Tulis pesan singkat (contoh: alasan tertarik, pengalaman relevan, ketersediaan jadwal, dll).">{{ old('catatan_pelamar') }}</textarea>
-
-                        @error('catatan_pelamar')
-                            <p class="text-xs text-red-600">{{ $message }}</p>
-                        @enderror
+                    
+                    <div class="space-y-4">
+                        <label class="text-sm font-black uppercase tracking-widest text-gray-900 block">Pesan Singkat Untuk HRD (Opsional)</label>
+                        <textarea name="catatan_pelamar" rows="4"
+                            class="w-full rounded-[20px] border-2 border-gray-100 bg-gray-50 px-6 py-4 text-sm text-gray-900
+                            focus:outline-none focus:border-[#00D1A0] transition-all duration-300 italic"
+                            placeholder="Ceritakan singkat mengapa kamu kandidat yang tepat...">{{ old('catatan_pelamar') }}</textarea>
                     </div>
 
-                    <div class="flex justify-end gap-3">
-                        <a href="{{ route('pelamar.jobs.show', $job->id) }}"
-                           class="rounded-xl border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-900 hover:bg-gray-50 transition">
-                            Batal
-                        </a>
-
-                        <button type="submit"
-                                class="rounded-xl bg-black px-5 py-2.5 text-sm font-medium text-white hover:bg-gray-900 transition">
-                            Kirim Lamaran
+                    <div class="mt-10 flex flex-col sm:flex-row gap-4">
+                        <button type="submit" class="flex-1 bg-[#00D1A0] hover:bg-emerald-400 text-gray-900 font-black uppercase tracking-widest py-4 rounded-2xl shadow-lg transition-all transform hover:-translate-y-1">
+                            Kirim Lamaran Sekarang
                         </button>
+                        <a href="{{ route('pelamar.jobs.show', $job->id) }}" class="px-8 py-4 text-center font-bold text-gray-400 hover:text-gray-900 transition uppercase tracking-widest text-xs">
+                            Batalkan
+                        </a>
                     </div>
+                    @if(session('success'))
+                    <div id="successModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+                        <div class="bg-white rounded-[40px] p-10 max-w-md w-full text-center shadow-2xl mx-4">
+                            <div class="w-20 h-20 bg-black rounded-full flex items-center justify-center mx-auto mb-6">
+                                <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M5 13l4 4L19 7"></path>
+                                </svg>
+                            </div>
+                            <h2 class="text-2xl font-black mb-2">Berhasil!</h2>
+                            <p class="text-gray-500 mb-8 leading-relaxed">
+                                Lamaran kamu telah terkirim ke <span class="font-bold text-gray-800">[{{ $job->company->nama }}]</span>. <br>
+                                Kamu bisa memantau statusnya di menu 'Lamaran'.
+                            </p>
+                            <button onclick="document.getElementById('successModal').remove()" 
+                                class="w-full bg-[#00D1A0] text-gray-900 font-black py-4 rounded-2xl uppercase tracking-widest hover:bg-emerald-400 transition">
+                                Oke, Mengerti
+                            </button>
+                        </div>
+                    </div>
+                    @endif
                 </form>
             </div>
         </div>
-    </div>
+
+        <footer class="mt-20 text-center text-gray-400 text-xs py-6">
+            © 2026, Sistem Informasi Karier dan Portofolio (SIKAP)
+        </footer>
+    </main>
+</div>
 @endsection

@@ -33,6 +33,7 @@ use App\Http\Controllers\Perusahaan\CompanyController as PerusahaanCompanyContro
 use App\Http\Controllers\Perusahaan\PerusahaanDashboardController;
 
 Route::view('/', 'welcome')->name('home');
+Route::get('contact', fn () => view('contact'))->name('contact');
 Route::get('/profile/edit/{id}', [PelamarProfileController::class, 'edit']);
 
 Route::middleware('guest')->group(function () {

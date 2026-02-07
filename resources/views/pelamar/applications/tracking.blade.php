@@ -17,8 +17,8 @@
             <a href="#" class="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-gray-600 hover:bg-gray-200 transition">
                 <span>📂</span> Dokumen
             </a>
-            <a href="#" class="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-gray-600 hover:bg-gray-200 transition">
-                <span>📂</span> Project
+            <a href="{{ route('pelamar.portofolio.index') }}" class="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-gray-600 hover:bg-gray-200 transition">
+                <span>📂</span> Portofolio
             </a>
             <a href="{{ route('pelamar.applications.tracking') }}" class="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium bg-[#4B4B4B] text-white shadow-md transition">
                 <span>💼</span> Lamaran
@@ -56,6 +56,26 @@
             <p class="text-gray-300 text-sm mt-1">Pantau status lamaran pekerjaanmu disini.</p>
         </div>
 
+        @if(session('success'))
+        <div id="successModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+            <div class="bg-white rounded-[40px] p-10 max-w-md w-full text-center shadow-2xl mx-4">
+                <div class="w-20 h-20 bg-black rounded-full flex items-center justify-center mx-auto mb-6">
+                    <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                </div>
+                <h2 class="text-2xl font-black mb-2">Berhasil!</h2>
+                <p class="text-gray-500 mb-8 leading-relaxed">
+                    Lamaran kamu telah terkirim ke <span class="font-bold text-gray-800">[{{ $job->company->nama }}]</span>. <br>
+                    Kamu bisa memantau statusnya di menu 'Lamaran'.
+                </p>
+                <button onclick="document.getElementById('successModal').remove()" 
+                    class="w-full bg-[#00D1A0] text-gray-900 font-black py-4 rounded-2xl uppercase tracking-widest hover:bg-emerald-400 transition">
+                    Oke, Mengerti
+                </button>
+            </div>
+        </div>
+        @endif
         @if(session('success'))
             <div class="mb-6 rounded-2xl bg-gray-800 text-white p-4 text-sm border border-gray-700">
                 {{ session('success') }}

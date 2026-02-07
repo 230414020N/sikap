@@ -124,7 +124,7 @@
                         <div class="lg:pl-20">
                             <h3 class="text-3xl font-bold mb-8">Tentang Kami</h3>
                             <ul class="space-y-4 text-gray-600">
-                                <li><a href="#kontak" class="hover:text-black transition">Hubungi Kami</a></li>
+                                <li><a href="{{ route('contact') }}" class="hover:text-black transition">Hubungi Kami</a></li>
                                 {{-- <li><a href="#" class="hover:text-black transition">Pusat Bantuan</a></li> --}}
                                 <li><a href="#" class="hover:text-black transition">Logo</a></li>
                             </ul>

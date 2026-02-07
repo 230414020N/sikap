@@ -99,8 +99,7 @@ class PelamarProfileController extends Controller
 
         $profile->update($validated);
 
-        return redirect()
-            ->route('pelamar.profile.edit')
+        return redirect('/pelamar/profile')
             ->with('success', 'Profil berhasil diperbarui.');
     }
 }

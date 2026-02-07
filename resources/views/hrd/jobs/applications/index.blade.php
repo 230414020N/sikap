@@ -1,122 +1,107 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="min-h-screen bg-gray-50">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-            <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6 mb-8">
-                <div>
-                    <div class="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-4 py-2 text-xs text-gray-700">
-                        <span class="h-1.5 w-1.5 rounded-full bg-gray-900"></span>
-                        Lamaran per Lowongan
-                    </div>
+<div class="min-h-screen bg-[#4b4b4b] p-4 sm:p-8">
+    <div class="max-w-7xl mx-auto">
+        <h1 class="text-white text-4xl font-bold mb-8">Lamaran Masuk</h1>
 
-                    <h1 class="mt-4 text-2xl sm:text-3xl font-semibold tracking-tight text-gray-900">
-                        {{ $job->judul }}
-                    </h1>
-
-                    <p class="mt-2 text-sm text-gray-600">
-                        Total lamaran: {{ $applications->total() }}
-                    </p>
-                </div>
-
-                <div class="flex flex-col sm:flex-row gap-3">
-                    <a href="{{ route('hrd.jobs.index') }}"
-                       class="inline-flex items-center justify-center rounded-xl border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-900 hover:bg-gray-50 transition">
-                        Kembali
-                    </a>
-
-                    <a href="{{ route('hrd.jobs.edit', $job->id) }}"
-                       class="inline-flex items-center justify-center rounded-xl border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-900 hover:bg-gray-50 transition">
-                        Edit Lowongan
-                    </a>
-
-                    <a href="{{ route('hrd.applications.index') }}"
-                       class="inline-flex items-center justify-center rounded-xl bg-gray-900 px-5 py-2.5 text-sm font-medium text-white hover:bg-black transition">
-                        Semua Lamaran
-                    </a>
-                </div>
+        <div class="bg-white rounded-3xl p-8 shadow-lg">
+            
+            <div class="mb-8">
+                <h2 class="text-lg font-semibold mb-4 text-gray-800">Cari Lamaran</h2>
+                <form method="GET" class="relative">
+                    <input type="text" 
+                           name="q" 
+                           value="{{ $search }}"
+                           placeholder="Cari nama, posisi, atau kata kunci lainnya..." 
+                           class="w-full bg-[#f0f0f0] border-none rounded-xl py-3 px-5 pr-12 focus:ring-2 focus:ring-blue-500 transition">
+                    <button type="submit" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                    </button>
+                    @if($status) <input type="hidden" name="status" value="{{ $status }}"> @endif
+                </form>
             </div>
 
-            @if(session('success'))
-                <div class="mb-6 rounded-2xl border border-gray-200 bg-white px-5 py-4 text-sm text-gray-900">
-                    {{ session('success') }}
-                </div>
-            @endif
+            <hr class="border-gray-300 mb-8">
 
-            <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
-                <div class="p-5 border-b border-gray-200">
-                    <form method="GET" class="grid grid-cols-1 md:grid-cols-3 gap-3">
-                        <div class="md:col-span-2">
-                            <input type="text" name="q" value="{{ $search }}"
-                                   placeholder="Cari nama atau email kandidat…"
-                                   class="w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-black/10 focus:border-gray-400 transition">
-                        </div>
-
-                        <div class="flex gap-3">
-                            <select name="status"
-                                    class="w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-black/10 focus:border-gray-400 transition">
-                                <option value="">Semua Status</option>
-                                @foreach($statuses as $s)
-                                    <option value="{{ $s }}" @selected($status === $s)>{{ $s }}</option>
-                                @endforeach
-                            </select>
-
-                            <button type="submit"
-                                    class="inline-flex items-center justify-center rounded-xl bg-gray-900 px-5 py-2.5 text-sm font-medium text-white hover:bg-black transition">
-                                Filter
-                            </button>
-                        </div>
-                    </form>
-                </div>
-
-                <table class="w-full text-sm">
-                    <thead class="bg-gray-50 text-gray-600">
-                        <tr>
-                            <th class="text-left px-5 py-3">Kandidat</th>
-                            <th class="text-left px-5 py-3">Status</th>
-                            <th class="text-left px-5 py-3">Tanggal</th>
-                            <th class="text-right px-5 py-3">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($applications as $app)
-                            <tr class="border-t border-gray-200">
-                                <td class="px-5 py-4">
-                                    <p class="font-medium text-gray-900">{{ $app->pelamar?->name ?? 'Pelamar' }}</p>
-                                    <p class="text-xs text-gray-600">{{ $app->pelamar?->email ?? '-' }}</p>
-                                </td>
-
-                                <td class="px-5 py-4">
-                                    <span class="text-xs px-3 py-1 rounded-full border border-gray-200 bg-gray-50 text-gray-800">
-                                        {{ $app->status ?? 'Dikirim' }}
+            <div class="mb-4">
+                <h2 class="text-lg font-semibold mb-6 text-gray-800">Daftar Lamaran</h2>
+                
+                <div class="overflow-x-auto">
+                    <table class="w-full text-center border-collapse">
+                        <thead>
+                            <tr class="text-gray-800 font-bold border-b-2 border-gray-300">
+                                <th class="pb-4 px-2">No</th>
+                                <th class="pb-4 px-2">Nama Lengkap</th>
+                                <th class="pb-4 px-2">Posisi</th>
+                                <th class="pb-4 px-2">Pendidikan</th>
+                                <th class="pb-4 px-2">Status</th>
+                                <th class="pb-4 px-2">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                            @forelse($applications as $index => $app)
+                            <tr>
+                                <td class="py-5 text-gray-700">{{ $applications->firstItem() + $index }}</td>
+                                <td class="py-5 text-gray-700">{{ $app->pelamar?->name ?? 'Pelamar' }}</td>
+                                <td class="py-5 text-gray-700">{{ $job->judul }}</td>
+                                <td class="py-5 text-gray-700">S1</td> <td class="py-5">
+                                    @php
+                                        $statusColor = match($app->status) {
+                                            'Interview' => 'bg-[#ffeeba] text-gray-800',
+                                            'Ditolak' => 'bg-[#f8d7da] text-red-700',
+                                            'Diterima' => 'bg-[#d4edda] text-green-700',
+                                            default => 'bg-[#c3e6cb] text-gray-800', // Status 'Ditinjau' atau default
+                                        };
+                                    @endphp
+                                    <span class="{{ $statusColor }} px-6 py-1.5 rounded-full text-xs font-semibold">
+                                        {{ $app->status ?? 'Ditinjau' }}
                                     </span>
                                 </td>
-
-                                <td class="px-5 py-4 text-gray-700">
-                                    {{ $app->created_at?->format('d M Y, H:i') }}
-                                </td>
-
-                                <td class="px-5 py-4 text-right">
-                                    <a href="{{ route('hrd.applications.show', $app->id) }}"
-                                       class="inline-flex items-center justify-center rounded-xl bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-black transition">
-                                        Detail
+                                <td class="py-5">
+                                    <a href="{{ route('hrd.applications.show', $app->id) }}" 
+                                       class="bg-[#4d79ff] text-white px-4 py-1.5 rounded-lg text-xs flex items-center justify-center gap-2 hover:bg-blue-600 transition inline-flex">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                        </svg>
+                                        Lihat Detail
                                     </a>
                                 </td>
                             </tr>
-                        @empty
+                            @empty
                             <tr>
-                                <td colspan="4" class="px-5 py-10 text-center text-gray-600">
-                                    Belum ada lamaran untuk lowongan ini.
-                                </td>
+                                <td colspan="6" class="py-10 text-gray-500 italic">Belum ada lamaran masuk.</td>
                             </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
-            <div class="mt-6">
-                {{ $applications->links() }}
+            <div class="mt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+                <p class="text-gray-600 text-sm">
+                    Menampilkan {{ $applications->firstItem() }} - {{ $applications->lastItem() }} dari {{ $applications->total() }} Lamaran
+                </p>
+                <div class="custom-pagination">
+                    {{ $applications->links('pagination::tailwind') }}
+                </div>
             </div>
         </div>
     </div>
+</div>
+
+<style>
+    /* Menyesuaikan style pagination agar lebih mirip dengan UI gambar */
+    .custom-pagination nav span[aria-current="page"] > span {
+        background-color: #4b4b4b !important;
+        border-color: #4b4b4b !important;
+    }
+    .custom-pagination nav a, .custom-pagination nav span {
+        border-radius: 8px !important;
+        margin: 0 2px;
+    }
+</style>
 @endsection
