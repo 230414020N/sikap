@@ -16,7 +16,7 @@
             <a href="{{ route('pelamar.portofolio.index') }}" class="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-gray-600 hover:bg-gray-200 transition">
                 <span>📂</span> Portofolio
             </a>
-            <a href="/profile" class="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium bg-[#4B4B4B] text-white shadow-md transition">
+            <a href="/pelamar/profile" class="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium bg-[#4B4B4B] text-white shadow-md transition">
                 <span>👤</span> Profil Saya
             </a>
         </nav>
