@@ -7,6 +7,7 @@ use App\Http\Controllers\Auth\HrdActivationController;
 use App\Http\Controllers\Auth\RoleLoginController;
 
 use App\Http\Controllers\Admin\AdminCompanyController;
+use App\Http\Controllers\Admin\AdminLoginController as AdminAdminLoginController;
 use App\Http\Controllers\Admin\AdminPortfolioModerationController;
 use App\Http\Controllers\Admin\MasterData\EducationLevelController as AdminEducationLevelController;
 use App\Http\Controllers\Admin\MasterData\JobCategoryController as AdminJobCategoryController;
@@ -38,6 +39,9 @@ Route::middleware('guest')->group(function () {
     Route::get('/login/hrd', [RoleLoginController::class, 'show'])->defaults('as', 'hrd')->name('login.hrd');
     Route::get('/login/perusahaan', [RoleLoginController::class, 'show'])->defaults('as', 'perusahaan')->name('login.perusahaan');
 
+    Route::get('/register/perusahaan', [CompanyRegistrationController::class, 'create'])->name('perusahaan.register');
+    Route::post('/register/perusahaan', [CompanyRegistrationController::class, 'store'])->name('perusahaan.register.store');
+
     Route::prefix('hrd')->group(function () {
     Route::get('/activate/{token}', [HrdActivationController::class, 'show'])
         ->middleware('signed:relative')
@@ -49,8 +53,8 @@ Route::middleware('guest')->group(function () {
     });
 
     Route::prefix('admin')->group(function () {
-        Route::get('/login', [AdminLoginController::class, 'create'])->name('admin.login');
-        Route::post('/login', [AdminLoginController::class, 'store'])->name('admin.login.store');
+        Route::get('/login', [AdminAdminLoginController::class, 'create'])->name('admin.login');
+        Route::post('/login', [AdminAdminLoginController::class, 'store'])->name('admin.login.store');
     });
 
     Route::prefix('perusahaan')->as('perusahaan.')->group(function () {

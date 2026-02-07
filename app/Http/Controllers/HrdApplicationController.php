@@ -302,22 +302,20 @@ class HrdApplicationController extends Controller
         return view('hrd.applications.by_job', compact('job', 'applications', 'statusOptions', 'jobs'));
     }
 
-    public function show(Application $application)
+    public function show($id)
     {
-        $application->loadMissing('job');
-        abort_if($application->job->company_id !== auth()->user()->company_id, 403);
+        $companyId = auth()->user()->company_id;
 
-        $application->load([
-            'job.company',
-            'pelamar.pelamarProfile',
-            'pelamar.portofolios',
-            'histories.updater',
-            'portofolios',
-            'internalNotes.creator'
-        ]);
+        $application = \App\Models\Application::query()
+            ->whereHas('job', function ($q) use ($companyId) {
+                $q->where('company_id', $companyId);
+            })
+            ->with(['job', 'pelamar', 'portofolios', 'histories', 'internalNotes'])
+            ->findOrFail($id);
 
         return view('hrd.applications.show', compact('application'));
     }
+
 
     public function updateStatus(Request $request, Application $application)
     {

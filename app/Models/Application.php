@@ -43,5 +43,8 @@ class Application extends Model
         return $this->hasMany(\App\Models\InternalNote::class);
     }
 
-
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 }
