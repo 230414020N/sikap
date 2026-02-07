@@ -89,4 +89,10 @@ class PortofolioController extends Controller
 
         return redirect()->route('pelamar.portofolio.index')->with('success', 'Portofolio berhasil dihapus!');
     }
+
+    public function show($id)
+{
+    $portofolio = Portofolio::findOrFail($id);
+    return view('pelamar.portofolio.show', compact('portofolio'));
+}
 }

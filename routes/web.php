@@ -80,6 +80,10 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+Route::get('/pelamar/portofolio/{id}', [PortofolioController::class, 'show'])->name('pelamar.portofolio.show');
+
+Route::get('/pelamar/portofolio', [PortofolioController::class, 'index'])->name('pelamar.portofolio.index');
+
 Route::middleware(['auth', 'role:pelamar'])->prefix('pelamar')->as('pelamar.')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     
@@ -90,7 +94,7 @@ Route::middleware(['auth', 'role:pelamar'])->prefix('pelamar')->as('pelamar.')->
     Route::post('/profile', [PelamarProfileController::class, 'update'])->name('profile.update');
 
     Route::resource('portofolio', PortofolioController::class)->except(['show']);
-
+    
     Route::get('/portofolio-public', [PublicPortfolioController::class, 'index'])->name('portofolio.public');
     Route::post('/portofolio/{portofolio}/like', [PublicPortfolioController::class, 'toggleLike'])->name('portofolio.like');
 
