@@ -8,9 +8,19 @@ use Illuminate\Support\Facades\Storage;
 
 class PelamarProfileController extends Controller
 {
-    public function edit()
+    public function show()
     {
         $profile = PelamarProfile::firstOrCreate(['user_id' => auth()->id()], []);
+
+        if ((int) $profile->user_id !== (int) auth()->id()) {
+            abort(403);
+        }
+
+        return view('pelamar.profile.show', compact('profile'));
+    }
+    public function edit($id)
+    {
+        $profile = PelamarProfile::firstOrCreate(['user_id' => $id], []);
 
         if ((int) $profile->user_id !== (int) auth()->id()) {
             abort(403);

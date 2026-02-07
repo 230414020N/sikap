@@ -33,6 +33,7 @@ use App\Http\Controllers\Perusahaan\CompanyController as PerusahaanCompanyContro
 use App\Http\Controllers\Perusahaan\PerusahaanDashboardController;
 
 Route::view('/', 'welcome')->name('home');
+Route::get('/profile/edit{id}', [PelamarProfileController::class, 'edit']);
 
 Route::middleware('guest')->group(function () {
     Route::get('/login/pelamar', [RoleLoginController::class, 'show'])->defaults('as', 'pelamar')->name('login.pelamar');
@@ -78,8 +79,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
-
+    });
+    
 Route::get('/pelamar/portofolio/{id}', [PortofolioController::class, 'show'])->name('pelamar.portofolio.show');
 
 Route::get('/pelamar/portofolio', [PortofolioController::class, 'index'])->name('pelamar.portofolio.index');
@@ -87,11 +88,11 @@ Route::get('/pelamar/portofolio', [PortofolioController::class, 'index'])->name(
 Route::middleware(['auth', 'role:pelamar'])->prefix('pelamar')->as('pelamar.')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     
-    Route::get('profile', [\App\Http\Controllers\PelamarProfileController::class, 'edit'])->name('profile.edit');
+    // Route::get('profile', [\App\Http\Controllers\PelamarProfileController::class, 'edit'])->name('profile.edit');
     Route::put('profile', [\App\Http\Controllers\PelamarProfileController::class, 'update'])->name('profile.update');
 
-    Route::get('/profile', [PelamarProfileController::class, 'edit'])->name('profile.edit');
     Route::post('/profile', [PelamarProfileController::class, 'update'])->name('profile.update');
+    Route::get('/profile', [PelamarProfileController::class, 'show'])->name('profile.show');
 
     Route::resource('portofolio', PortofolioController::class)->except(['show']);
     

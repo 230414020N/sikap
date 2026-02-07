@@ -9,14 +9,14 @@
             'portofolio' => route('pelamar.portofolio.index'),
             'portofolio_create' => route('pelamar.portofolio.create'),
             'notifications' => route('pelamar.notifications.index'),
-            'profile_docs' => route('pelamar.profile.edit'),
+            'profile_docs' => route('pelamar.profile.show'),
             'account' => route('profile.edit'),
             'logout' => route('logout'),
         ];
 
         $menuItems = [
             ['label' => 'Dashboard', 'href' => $routes['dashboard'], 'active' => 'dashboard', 'icon' => 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6'],
-            ['label' => 'Profile', 'href' => $routes['profile_docs'], 'active' => 'pelamar.profile.*', 'icon' => 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z'],
+            ['label' => 'Profile', 'href' => $routes['profile_docs'], 'active' => 'pelamar.profile.show', 'icon' => 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z'],
             ['label' => 'Dokumen', 'href' => $routes['account'], 'active' => 'profile.*', 'icon' => 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z'],
             ['label' => 'Portofolio', 'href' => $routes['portofolio'], 'active' => 'pelamar.portofolio.*', 'icon' => 'M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10'],
             ['label' => 'Tracking Lamaran', 'href' => $routes['tracking'], 'active' => 'pelamar.applications.*', 'icon' => 'M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z'],
@@ -114,7 +114,7 @@
                             {{ $profileBadgeText }}
                         </span>
                         <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-white">
-                            Project: {{ (int) ($portofolioCount ?? 0) }}
+                            Portofolio: {{ (int) ($portofolioCount ?? 0) }}
                         </span>
                     </div>
                     <p class="text-gray-300">Semoga harimu menyenangkan dan semoga segera mendapatkan pekerjaan terbaik.</p>
@@ -193,7 +193,7 @@
 
                 <div class="bg-white rounded-2xl p-8 shadow-lg">
                     <div class="flex justify-between items-center mb-6">
-                        <h2 class="font-bold text-lg">Project Showcase Terbaru</h2>
+                        <h2 class="font-bold text-lg">Portofolio Showcase Terbaru</h2>
                         <a href="{{ $routes['portofolio'] }}" class="text-blue-600 text-sm hover:underline">Lihat Semua</a>
                     </div>
 
@@ -201,7 +201,7 @@
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                             @foreach($latestPortofolios as $p)
                                 @php
-                                    $title = $p->judul ?? $p->title ?? 'Project';
+                                    $title = $p->judul ?? $p->title ?? 'Portofolio';
                                     $cover = $p->thumbnail_path ?? $p->cover_path ?? $p->image_path ?? $p->gambar_path ?? null;
 
                                     $coverUrl = 'https://via.placeholder.com/300x200';
@@ -230,10 +230,10 @@
                         </div>
                     @else
                         <div class="rounded-xl border border-dashed border-gray-300 p-10 text-center">
-                            <p class="text-gray-700 font-semibold mb-2">Belum ada project yang ditampilkan</p>
-                            <p class="text-gray-500 text-sm mb-6">Tambahkan project pertamamu agar perekrut bisa melihat portofoliomu.</p>
+                            <p class="text-gray-700 font-semibold mb-2">Belum ada Portofolio yang ditampilkan</p>
+                            <p class="text-gray-500 text-sm mb-6">Tambahkan Portofolio pertamamu agar perekrut bisa melihat portofoliomu.</p>
                             <a href="{{ $routes['portofolio_create'] }}" class="inline-flex items-center justify-center px-5 py-2 rounded-xl bg-[#555555] text-white font-semibold hover:opacity-90 transition">
-                                Tambah Project
+                                Tambah Portofolio
                             </a>
                         </div>
                     @endif
