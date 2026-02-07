@@ -96,8 +96,12 @@
                         <tbody class="divide-y divide-gray-100">
                             @forelse($hrdUsers as $index => $hrd)
                                 @php
+                                    $link = $activationLinks[$hrd->id] ?? null;
+                                    $expiresAt = $activationExpiresAt[$hrd->id] ?? null;
                                     $isActivated = !empty($hrd->email_verified_at);
+                                    $inputId = 'actlink-'.$hrd->id;
                                 @endphp
+                                
                                 <tr>
                                     <td class="py-6 text-center text-gray-700 text-sm">
                                         {{ $hrdUsers->firstItem() + $index }}
@@ -130,9 +134,59 @@
                                                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-4v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                                                 </button>
                                             </form>
+                                            @if(!$isActivated)
+                                                <button
+                                                    type="button"
+                                                    class="p-2 text-gray-600 hover:text-indigo-600 transition"
+                                                    onclick="openActivationModal(this)"
+                                                    data-link="{{ $link }}"
+                                                    data-expires="{{ optional($expiresAt)->format('d M Y, H:i') }}"
+                                                    data-action="{{ route('perusahaan.hrd.activation-link', $hrd->id) }}"
+                                                >
+                                                    Aktikfasi
+                                                </button>
+                                            @endif
                                         </div>
                                     </td>
                                 </tr>
+                                <div id="activationModal"
+     class="fixed inset-0 z-50 hidden items-center justify-center bg-black/40">
+
+    <div class="w-full max-w-lg rounded-3xl bg-white p-8 shadow-xl relative">
+
+        <button onclick="closeActivationModal()"
+                class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+            ✕
+        </button>
+
+        <h2 class="text-xl font-bold text-gray-900">
+            Aktivasi Akun HRD
+        </h2>
+        <p class="mt-1 text-sm text-gray-600">
+            Generate dan kirim link aktivasi ke HRD.
+        </p>
+
+        <div id="activationContent" class="mt-6 space-y-4">
+            {{-- diisi via JS --}}
+        </div>
+
+        <div class="mt-6 flex justify-end gap-3">
+            <button onclick="closeActivationModal()"
+                    class="rounded-xl border px-5 py-2.5 text-sm hover:bg-gray-100">
+                Tutup
+            </button>
+
+            <form id="activationForm" method="POST">
+                @csrf
+                <button
+                    class="rounded-xl bg-gray-900 px-5 py-2.5 text-sm text-white hover:bg-black">
+                    Generate Link
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
                             @empty
                                 <tr>
                                     <td colspan="5" class="py-12 text-center text-gray-500 italic">
@@ -155,4 +209,53 @@
         </footer>
     </main>
 </div>
+
+<script>
+function openActivationModal(button) {
+    const modal = document.getElementById('activationModal');
+    const content = document.getElementById('activationContent');
+    const form = document.getElementById('activationForm');
+
+    const link = button.dataset.link;
+    const expires = button.dataset.expires;
+    const action = button.dataset.action;
+
+    form.action = action;
+
+    if (link) {
+        content.innerHTML = `
+            <div>
+                <input readonly value="${link}"
+                    class="w-full rounded-xl border px-4 py-3 text-sm bg-gray-50">
+                ${expires ? `<p class="mt-1 text-xs text-gray-500">Expired: ${expires}</p>` : ''}
+                <button onclick="copyLink('${link}')"
+                    class="mt-3 text-sm underline text-gray-900 hover:text-gray-700">
+                    Copy link
+                </button>
+            </div>
+        `;
+    } else {
+        content.innerHTML = `
+            <p class="text-sm text-gray-600">
+                Link aktivasi belum tersedia atau sudah expired.
+            </p>
+        `;
+    }
+
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+}
+
+function closeActivationModal() {
+    const modal = document.getElementById('activationModal');
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+}
+
+function copyLink(link) {
+    navigator.clipboard.writeText(link);
+    alert('Link berhasil disalin');
+}
+</script>
+
 @endsection
