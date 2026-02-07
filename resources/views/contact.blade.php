@@ -158,6 +158,10 @@
             padding-bottom: 30px;
         }
 
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
         /* ================= RESPONSIVE ================= */
         @media (max-width: 900px) {
             .content {
