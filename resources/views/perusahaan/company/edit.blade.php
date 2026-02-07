@@ -1,170 +1,161 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="min-h-screen bg-gray-50">
-  <div class="max-w-5xl mx-auto px-4 py-8">
-    <div class="flex items-start justify-between gap-4">
-      <div>
-        <h1 class="text-2xl font-semibold text-gray-900">Profil Perusahaan</h1>
-        <p class="mt-1 text-sm text-gray-600">Lengkapi profil untuk meningkatkan kepercayaan pelamar.</p>
-      </div>
+@php
+    $companyName = $company->nama_perusahaan ?? $company->nama ?? $company->name ?? '(nama perusahaan)';
+    $companyInitial = strtoupper(mb_substr(trim((string) $companyName), 0, 1)) ?: 'P';
+    
+    // Navigasi Sidebar
+    $navBase = 'flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition duration-200';
+    $navActive = 'bg-gray-800 text-white shadow-md';
+    $navInactive = 'text-gray-600 hover:bg-gray-100';
 
-      <a href="{{ route('perusahaan.dashboard') }}"
-         class="rounded-xl border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-900 hover:bg-gray-50 transition">
-        Kembali ke Dashboard
-      </a>
-    </div>
+    $menu = [
+        ['label' => 'Dashboard', 'icon' => '🏠', 'href' => route('perusahaan.dashboard'), 'active' => 'perusahaan.dashboard'],
+        ['label' => 'Profile', 'icon' => '👤', 'href' => '#', 'active' => 'perusahaan.company.*'],
+        ['label' => 'Kelola Akun HRD', 'icon' => '⚙️', 'href' => '#', 'active' => 'perusahaan.hrd.*'],
+        ['label' => 'Lowongan', 'icon' => '💼', 'href' => '#', 'active' => 'perusahaan.jobs.*'],
+    ];
+@endphp
 
-    @if(session('success'))
-      <div class="mt-4 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-900">
-        {{ session('success') }}
-      </div>
-    @endif
-
-    @if($errors->any())
-      <div class="mt-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-900">
-        <div class="font-medium mb-2">Ada input yang perlu diperbaiki:</div>
-        <ul class="list-disc pl-5 space-y-1">
-          @foreach($errors->all() as $error)
-            <li>{{ $error }}</li>
-          @endforeach
-        </ul>
-      </div>
-    @endif
-
-    @php
-      $logoUrl = !empty($company->logo) ? asset('storage/' . $company->logo) : null;
-      $bannerUrl = !empty($company->banner) ? asset('storage/' . $company->banner) : null;
-
-      $logoFallback = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='100%25' height='100%25' fill='%23F3F4F6'/><text x='50%25' y='52%25' dominant-baseline='middle' text-anchor='middle' fill='%239CA3AF' font-size='10'>Logo</text></svg>";
-      $bannerFallback = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='800' height='260'><rect width='100%25' height='100%25' fill='%23F3F4F6'/><text x='50%25' y='52%25' dominant-baseline='middle' text-anchor='middle' fill='%239CA3AF' font-size='14'>Banner</text></svg>";
-    @endphp
-
-    <form class="mt-6 space-y-8"
-          method="PUT"
-          action="{{ route('perusahaan.company.update') }}"
-          enctype="multipart/form-data">
-      @csrf
-      @method('PUT')
-
-      <div class="rounded-2xl border border-gray-200 bg-white p-6">
-        <h2 class="text-lg font-semibold text-gray-900 mb-1">Branding</h2>
-        <p class="text-sm text-gray-600 mb-5">Tambahkan logo dan banner agar profil perusahaan terlihat profesional.</p>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div class="md:col-span-1">
-            <label class="block text-sm font-medium text-gray-900 mb-2">Logo</label>
-
-            <div class="flex items-center gap-4">
-              <div class="h-16 w-16 rounded-xl overflow-hidden border border-gray-200 bg-gray-50 flex items-center justify-center">
-                <img id="logoPreview"
-                     src="{{ $logoUrl ?: $logoFallback }}"
-                     alt="Logo perusahaan"
-                     class="h-full w-full object-cover" />
-              </div>
-
-              <div class="flex-1">
-                <input type="file"
-                       name="logo"
-                       accept="image/png,image/jpeg,image/webp"
-                       class="block w-full text-sm text-gray-700"
-                       onchange="previewImg(event,'logoPreview')" />
-                <p class="mt-1 text-xs text-gray-500">Format: JPG/PNG/WEBP. Maks 2MB.</p>
-                @error('logo') <p class="mt-2 text-xs text-red-600">{{ $message }}</p> @enderror
-              </div>
-            </div>
-          </div>
-
-          <div class="md:col-span-2">
-            <label class="block text-sm font-medium text-gray-900 mb-2">Banner</label>
-
-            <div class="rounded-xl overflow-hidden border border-gray-200 bg-gray-50">
-              <img id="bannerPreview"
-                   src="{{ $bannerUrl ?: $bannerFallback }}"
-                   alt="Banner perusahaan"
-                   class="w-full h-40 object-cover" />
-            </div>
-
-            <input type="file"
-                   name="banner"
-                   accept="image/png,image/jpeg,image/webp"
-                   class="mt-3 block w-full text-sm text-gray-700"
-                   onchange="previewImg(event,'bannerPreview')" />
-            <p class="mt-1 text-xs text-gray-500">Format: JPG/PNG/WEBP. Maks 4MB.</p>
-            @error('banner') <p class="mt-2 text-xs text-red-600">{{ $message }}</p> @enderror
-          </div>
+<div class="min-h-screen bg-[#F4F4F4] flex">
+    <aside class="w-72 bg-white border-r border-gray-200 hidden lg:flex flex-col p-6 sticky top-0 h-screen">
+        <div class="mb-10 px-2 font-bold text-2xl tracking-tighter">
+            SIKAP<span class="text-xs font-normal align-top">.</span>
         </div>
-      </div>
 
-      <div class="rounded-2xl border border-gray-200 bg-white p-6">
-        <h2 class="text-lg font-semibold text-gray-900 mb-1">Informasi Perusahaan</h2>
-        <p class="text-sm text-gray-600 mb-5">Pastikan data sesuai agar kandidat lebih percaya.</p>
+        <nav class="flex-1 space-y-2">
+            @foreach($menu as $item)
+                @php $isActive = request()->routeIs($item['active']); @endphp
+                <a href="{{ $item['href'] }}" class="{{ $isActive ? $navActive : $navInactive }} {{ $navBase }}">
+                    <span>{{ $item['icon'] }}</span>
+                    <span>{{ $item['label'] }}</span>
+                </a>
+            @endforeach
+        </nav>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label class="block text-sm font-medium text-gray-900 mb-1">Nama perusahaan</label>
-            <input type="text"
-                   name="nama_perusahaan"
-                   value="{{ old('nama_perusahaan', $company->nama_perusahaan) }}"
-                   class="w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-black focus:border-black transition"
-                   required />
-            @error('nama_perusahaan') <p class="mt-2 text-xs text-red-600">{{ $message }}</p> @enderror
-          </div>
-
-          <div>
-            <label class="block text-sm font-medium text-gray-900 mb-1">Bidang usaha</label>
-            <input type="text"
-                   name="bidang_usaha"
-                   value="{{ old('bidang_usaha', $company->bidang_usaha) }}"
-                   class="w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-black focus:border-black transition" />
-            @error('bidang_usaha') <p class="mt-2 text-xs text-red-600">{{ $message }}</p> @enderror
-          </div>
-
-          <div>
-            <label class="block text-sm font-medium text-gray-900 mb-1">Website</label>
-            <input type="url"
-                   name="website"
-                   value="{{ old('website', $company->website) }}"
-                   placeholder="https://perusahaanmu.com"
-                   class="w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-black focus:border-black transition" />
-            @error('website') <p class="mt-2 text-xs text-red-600">{{ $message }}</p> @enderror
-          </div>
-
-          <div>
-            <label class="block text-sm font-medium text-gray-900 mb-1">Lokasi (Kota)</label>
-            <input type="text"
-                   name="lokasi"
-                   value="{{ old('lokasi', $company->lokasi) }}"
-                   class="w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-black focus:border-black transition" />
-            @error('lokasi') <p class="mt-2 text-xs text-red-600">{{ $message }}</p> @enderror
-          </div>
-
-          <div class="md:col-span-2">
-            <label class="block text-sm font-medium text-gray-900 mb-1">Deskripsi</label>
-            <textarea name="deskripsi"
-                      rows="5"
-                      class="w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-black focus:border-black transition"
-                      placeholder="Ceritakan tentang perusahaan, budaya kerja, benefit, dan hal menarik lainnya...">{{ old('deskripsi', $company->deskripsi) }}</textarea>
-            @error('deskripsi') <p class="mt-2 text-xs text-red-600">{{ $message }}</p> @enderror
-          </div>
+        <div class="mt-auto pt-6 border-t border-gray-100">
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button type="submit" class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-600 hover:bg-gray-100 rounded-xl w-full transition">
+                    <span>🚪</span> Keluar
+                </button>
+            </form>
         </div>
-      </div>
+    </aside>
 
-      <div class="flex justify-end">
-        <button type="submit"
-                class="rounded-xl bg-black px-5 py-3 text-sm font-medium text-white hover:bg-gray-900 transition">
-          Simpan Profil
-        </button>
-      </div>
-    </form>
-  </div>
+    <main class="flex-1 p-6 lg:p-10">
+        <header class="flex justify-end items-center mb-10 gap-6">
+            <button class="text-gray-500 hover:text-gray-800 transition">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+            </button>
+            <div class="flex items-center gap-3">
+                <span class="text-sm font-medium text-gray-700">({{ $companyName }})</span>
+                <div class="h-9 w-9 rounded-full bg-black text-white flex items-center justify-center text-xs ring-2 ring-white shadow-sm">
+                    {{ $companyInitial }}
+                </div>
+            </div>
+        </header>
+
+        <h1 class="text-2xl font-bold text-gray-900 mb-8">Ubah Profile Utama Perusahaan Anda!</h1>
+
+        @if(session('success'))
+            <div class="mb-6 rounded-2xl bg-emerald-50 border border-emerald-100 p-4 text-emerald-800 text-sm flex items-center gap-3">
+                <span>✅</span> {{ session('success') }}
+            </div>
+        @endif
+
+        <form method="POST" action="{{ route('perusahaan.company.update') }}" enctype="multipart/form-data" class="space-y-6">
+            @csrf
+            @method('PUT')
+
+            <div class="bg-white rounded-[32px] p-8 shadow-sm border border-gray-100">
+                <h3 class="text-lg font-bold text-gray-900 mb-6">Foto Perusahaan</h3>
+                <div class="flex flex-col md:flex-row items-center gap-8">
+                    <div class="relative group">
+                        <div class="h-32 w-32 rounded-full overflow-hidden bg-gray-100 border-2 border-gray-50 shadow-inner">
+                            <img id="logoPreview" 
+                                 src="{{ !empty($company->logo) ? asset('storage/' . $company->logo) : 'https://ui-avatars.com/api/?name='.urlencode($companyName).'&background=E5E7EB&color=9CA3AF' }}" 
+                                 class="h-full w-full object-cover">
+                        </div>
+                    </div>
+                    
+                    <div class="flex-1">
+                        <label for="logo" class="inline-flex items-center gap-2 px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium rounded-xl cursor-pointer transition">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                            Pilih Foto
+                        </label>
+                        <input type="file" id="logo" name="logo" class="hidden" onchange="previewImg(event, 'logoPreview')">
+                        <p class="mt-3 text-xs text-gray-400 leading-relaxed">Format .jpg, .jpeg, .png<br>Rekomendasi ukuran 1200px x 1200px, Ukuran max 2Mb</p>
+                        @error('logo') <p class="mt-2 text-xs text-red-600">{{ $message }}</p> @enderror
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-[32px] p-8 shadow-sm border border-gray-100 space-y-8">
+                <div class="space-y-2">
+                    <label class="text-sm font-bold text-gray-900">Nama Perusahaan</label>
+                    <input type="text" name="nama_perusahaan" value="{{ old('nama_perusahaan', $company->nama_perusahaan) }}" 
+                           class="w-full bg-[#E5E7EB] border-none rounded-xl px-4 py-4 text-sm text-gray-700 focus:ring-2 focus:ring-blue-500 transition placeholder-gray-500"
+                           placeholder="Masukkan Nama Perusahaan">
+                </div>
+
+                <div class="space-y-2">
+                    <label class="text-sm font-bold text-gray-900">Bentuk Usaha</label>
+                    <input type="text" name="bidang_usaha" value="{{ old('bidang_usaha', $company->bidang_usaha) }}" 
+                           class="w-full bg-[#E5E7EB] border-none rounded-xl px-4 py-4 text-sm text-gray-700 focus:ring-2 focus:ring-blue-500 transition placeholder-gray-500"
+                           placeholder="Masukkan Bentuk Usaha">
+                </div>
+
+                <div class="space-y-2">
+                    <label class="text-sm font-bold text-gray-900">Email Perusahaan</label>
+                    <input type="email" name="email_perusahaan" value="{{ old('email_perusahaan', $company->email) }}" 
+                           class="w-full bg-[#E5E7EB] border-none rounded-xl px-4 py-4 text-sm text-gray-700 focus:ring-2 focus:ring-blue-500 transition placeholder-gray-500"
+                           placeholder="Masukkan Email">
+                </div>
+
+                <div class="space-y-2">
+                    <label class="text-sm font-bold text-gray-900">Alamat Perusahaan</label>
+                    <textarea name="deskripsi" rows="6" 
+                              class="w-full bg-[#E5E7EB] border-none rounded-xl px-4 py-4 text-sm text-gray-700 focus:ring-2 focus:ring-blue-500 transition placeholder-gray-500 resize-none"
+                              placeholder="Masukkan Alamat Lengkap">{{ old('deskripsi', $company->deskripsi) }}</textarea>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="text-sm font-bold text-gray-900">Kota / Kabupaten</label>
+                    <input type="text" name="lokasi" value="{{ old('lokasi', $company->lokasi) }}" 
+                           class="w-full bg-[#E5E7EB] border-none rounded-xl px-4 py-4 text-sm text-gray-700 focus:ring-2 focus:ring-blue-500 transition placeholder-gray-500"
+                           placeholder="Masukkan Nama Kota">
+                </div>
+
+                <div class="flex justify-end gap-4 pt-4">
+                    <a href="{{ route('perusahaan.dashboard') }}" 
+                       class="px-10 py-3 bg-blue-500 hover:bg-blue-600 text-white font-bold rounded-xl transition shadow-lg shadow-blue-200">
+                        Kembali
+                    </a>
+                    <button type="submit" 
+                            class="px-10 py-3 bg-[#00C17C] hover:bg-emerald-600 text-white font-bold rounded-xl transition shadow-lg shadow-emerald-100">
+                        Simpan Perubahan
+                    </button>
+                </div>
+            </div>
+        </form>
+
+        <footer class="mt-12 text-center text-gray-400 text-xs py-6 flex items-center justify-center gap-2">
+            <span class="text-lg">©</span> 2025, Sistem Informasi Karier dan Portofolio
+        </footer>
+    </main>
 </div>
 
 <script>
-  function previewImg(event, id) {
-    const file = event.target.files && event.target.files[0]
-    if (!file) return
-    document.getElementById(id).src = URL.createObjectURL(file)
-  }
+    function previewImg(event, id) {
+        const file = event.target.files && event.target.files[0]
+        if (!file) return
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById(id).src = e.target.result;
+        }
+        reader.readAsDataURL(file);
+    }
 </script>
 @endsection
