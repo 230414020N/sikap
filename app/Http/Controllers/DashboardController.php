@@ -41,6 +41,15 @@ class DashboardController extends Controller
             ->take(5)
             ->get();
 
+        $applicationStats = Application::query()
+            ->where('user_id', $user->id)
+            ->selectRaw("
+                COUNT(*) as total,
+                SUM(status = 'interview') as interview,
+                SUM(status = 'diterima') as accepted,
+                SUM(status = 'ditolak') as rejected
+            ")
+            ->first();
         return view('pelamar.dashboard', compact(
             'profileComplete',
             'portofolioCount',
