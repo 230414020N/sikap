@@ -2,6 +2,7 @@
 
 @section('content')
     @php
+        // LOGIC & ROUTES TETAP SAMA (TIDAK DIUBAH)
         $routes = [
             'dashboard' => route('dashboard'),
             'jobs' => route('pelamar.jobs.index'),
@@ -14,374 +15,153 @@
             'logout' => route('logout'),
         ];
 
-        $primaryMenu = [
-            [
-                'label' => 'Dashboard',
-                'href' => $routes['dashboard'],
-                'active' => 'dashboard',
-                'right' => '↵',
-                'variant' => 'primary',
-            ],
-            [
-                'label' => 'Cari Lowongan',
-                'href' => $routes['jobs'],
-                'active' => 'pelamar.jobs.*',
-                'right' => '→',
-                'variant' => 'secondary',
-            ],
-            [
-                'label' => 'Tracking Lamaran',
-                'href' => $routes['tracking'],
-                'active' => 'pelamar.applications.*',
-                'right' => '→',
-                'variant' => 'secondary',
-            ],
-            [
-                'label' => 'Portofolio',
-                'href' => $routes['portofolio'],
-                'active' => 'pelamar.portofolio.*',
-                'right' => '→',
-                'variant' => 'secondary',
-            ],
-            [
-                'label' => 'Notifikasi',
-                'href' => $routes['notifications'],
-                'active' => 'pelamar.notifications.*',
-                'right' => '→',
-                'variant' => 'secondary',
-            ],
+        // Mapping Menu ke Ikon sesuai gambar
+        $menuItems = [
+            ['label' => 'Dashboard', 'href' => $routes['dashboard'], 'active' => 'dashboard', 'icon' => 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6'],
+            ['label' => 'Profile', 'href' => $routes['profile_docs'], 'active' => 'pelamar.profile.*', 'icon' => 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z'],
+            ['label' => 'Dokumen', 'href' => $routes['account'], 'active' => 'profile.*', 'icon' => 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z'],
+            ['label' => 'Project', 'href' => $routes['portofolio'], 'active' => 'pelamar.portofolio.*', 'icon' => 'M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10'],
+            ['label' => 'Lamaran', 'href' => $routes['tracking'], 'active' => 'pelamar.applications.*', 'icon' => 'M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z'],
         ];
 
-        $generalMenu = [
-            [
-                'label' => 'Profil & Dokumen',
-                'href' => $routes['profile_docs'],
-                'active' => 'pelamar.profile.*',
-                'right' => '→',
-            ],
-            [
-                'label' => 'Pengaturan Akun',
-                'href' => $routes['account'],
-                'active' => 'profile.*',
-                'right' => '→',
-            ],
-        ];
-
-        $shortcutTabs = [
-            ['label' => 'Jobs', 'href' => $routes['jobs'], 'active' => 'pelamar.jobs.*'],
-            ['label' => 'Tracking', 'href' => $routes['tracking'], 'active' => 'pelamar.applications.*'],
-            ['label' => 'Portofolio', 'href' => $routes['portofolio'], 'active' => 'pelamar.portofolio.*'],
-        ];
-
-        $moduleCardsTop = [
-            ['label' => 'Profil', 'desc' => 'Edit data diri, CV, dan surat lamaran.', 'href' => $routes['profile_docs'], 'active' => 'pelamar.profile.*'],
-            ['label' => 'Portofolio', 'desc' => 'Tambah, edit, dan kelola showcase.', 'href' => $routes['portofolio'], 'active' => 'pelamar.portofolio.*'],
-            ['label' => 'Lowongan', 'desc' => 'Cari lowongan dan lihat detailnya.', 'href' => $routes['jobs'], 'active' => 'pelamar.jobs.*'],
-        ];
-
-        $moduleCardsBottom = [
-            ['label' => 'Tracking', 'desc' => 'Lihat status lamaran dan detailnya.', 'href' => $routes['tracking'], 'active' => 'pelamar.applications.*'],
-            ['label' => 'Notifikasi', 'desc' => 'Update status lamaran masuk di sini.', 'href' => $routes['notifications'], 'active' => 'pelamar.notifications.*'],
-        ];
-
-        $btnBase = 'inline-flex items-center justify-center rounded-2xl px-5 py-3 text-sm font-medium transition focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-900/20 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-50';
-        $btnSecondary = $btnBase . ' border border-gray-200 bg-white text-gray-900 hover:bg-gray-50';
-        $btnPrimary = $btnBase . ' bg-gray-900 text-white hover:bg-black shadow-sm';
-
-        $profileCompleteValue = (($profileComplete ?? false) === true);
-        $portofolioCountValue = (int) ($portofolioCount ?? 0);
         $applicationCountValue = (int) ($applicationCount ?? 0);
-
-        $target = (int) ($targetShowcase ?? 3);
-        $progress = (int) ($progressProfile ?? min(100, round(($portofolioCountValue / max(1, $target)) * 100)));
-
-        $statCards = [
-            [
-                'label' => 'Kelengkapan Profil',
-                'value' => $profileCompleteValue ? 'Lengkap' : 'Belum',
-                'desc' => $profileCompleteValue ? 'CV & surat lamaran tersedia' : 'Tambah CV & surat lamaran',
-                'icon' => '↗',
-                'iconClass' => 'bg-gray-900 text-white',
-                'actionLabel' => 'Lengkapi',
-                'actionHref' => $routes['profile_docs'],
-                'actionClass' => $btnSecondary,
-            ],
-            [
-                'label' => 'Portofolio',
-                'value' => $portofolioCountValue,
-                'desc' => 'Total showcase kamu',
-                'icon' => '+',
-                'iconClass' => 'border border-gray-200 bg-gray-50 text-gray-900',
-                'actionLabel' => 'Kelola',
-                'actionHref' => $routes['portofolio'],
-                'actionClass' => $btnSecondary,
-            ],
-            [
-                'label' => 'Lamaran',
-                'value' => $applicationCountValue,
-                'desc' => 'Total terkirim',
-                'icon' => '→',
-                'iconClass' => 'border border-gray-200 bg-white text-gray-900',
-                'actionLabel' => 'Tracking',
-                'actionHref' => $routes['tracking'],
-                'actionClass' => $btnSecondary,
-            ],
-        ];
     @endphp
 
-    <div class="min-h-screen bg-gray-100">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <div class="bg-gray-50 border border-gray-200 rounded-[28px] shadow-sm overflow-hidden">
-                <div class="grid grid-cols-1 lg:grid-cols-[280px_1fr] min-h-[78vh]">
-                    <aside class="bg-white border-b lg:border-b-0 lg:border-r border-gray-200 lg:sticky lg:top-0 lg:h-screen">
-                        <div class="p-6">
-                            <div class="flex items-center gap-3">
-                                <div class="h-11 w-11 rounded-3xl bg-gray-900 text-white flex items-center justify-center text-sm font-semibold shadow-sm">
-                                    S
-                                </div>
-                                <div class="leading-tight">
-                                    <p class="text-base font-semibold tracking-tight text-gray-900">SIKAP</p>
-                                    <p class="text-xs text-gray-500">Pelamar</p>
-                                </div>
-                            </div>
-
-                            <div class="mt-6">
-                                <p class="text-[11px] font-semibold tracking-widest text-gray-500">MENU</p>
-
-                                <div class="mt-3 space-y-2">
-                                    @foreach($primaryMenu as $item)
-                                        @php
-                                            $isActive = request()->routeIs($item['active'])
-                                                || ($item['variant'] === 'primary' && request()->routeIs('dashboard'));
-                                        @endphp
-
-                                        <a href="{{ $item['href'] }}"
-                                           @class([
-                                               'flex items-center justify-between rounded-2xl px-4 py-3 text-sm font-medium transition focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-900/20 focus-visible:ring-offset-2',
-                                               'bg-gray-900 text-white shadow-sm' => $isActive,
-                                               'border border-gray-200 bg-white text-gray-900 hover:bg-gray-50' => !$isActive,
-                                           ])>
-                                            <span>{{ $item['label'] }}</span>
-                                            <span @class([
-                                                'text-xs',
-                                                'text-white/70' => $isActive,
-                                                'text-gray-500' => !$isActive,
-                                            ])>{{ $item['right'] }}</span>
-                                        </a>
-                                    @endforeach
-                                </div>
-                            </div>
-
-                            <div class="mt-8">
-                                <p class="text-[11px] font-semibold tracking-widest text-gray-500">GENERAL</p>
-
-                                <div class="mt-3 space-y-2">
-                                    @foreach($generalMenu as $item)
-                                        <a href="{{ $item['href'] }}"
-                                           @class([
-                                               'flex items-center justify-between rounded-2xl px-4 py-3 text-sm font-medium transition focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-900/20 focus-visible:ring-offset-2',
-                                               'border border-gray-200 bg-white text-gray-900 hover:bg-gray-50',
-                                               'ring-2 ring-gray-900/10' => request()->routeIs($item['active']),
-                                           ])>
-                                            <span>{{ $item['label'] }}</span>
-                                            <span class="text-xs text-gray-500">{{ $item['right'] }}</span>
-                                        </a>
-                                    @endforeach
-
-                                    <form method="POST" action="{{ $routes['logout'] }}">
-                                        @csrf
-                                        <button type="submit"
-                                                class="w-full flex items-center justify-between rounded-2xl px-4 py-3 text-sm font-medium border border-gray-200 bg-white text-gray-900 hover:bg-gray-50 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-900/20 focus-visible:ring-offset-2">
-                                            <span>Logout</span>
-                                            <span class="text-xs text-gray-500">↩</span>
-                                        </button>
-                                    </form>
-                                </div>
-                            </div>
-
-                            <div class="mt-8 rounded-3xl border border-gray-200 bg-gray-50 p-5">
-                                <p class="text-xs text-gray-600">Quick Action</p>
-                                <p class="mt-2 text-sm font-semibold text-gray-900">Tambah showcase</p>
-                                <p class="mt-1 text-xs text-gray-600">Portofolio rapi bikin peluang makin besar.</p>
-
-                                <a href="{{ $routes['portofolio_create'] }}"
-                                   class="mt-4 inline-flex items-center justify-center rounded-2xl bg-gray-900 px-4 py-2.5 text-sm font-medium text-white hover:bg-black transition w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-900/20 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-50">
-                                    + Portofolio
-                                </a>
-                            </div>
-                        </div>
-                    </aside>
-
-                    <main class="bg-gray-50">
-                        <div class="p-6 sm:p-8">
-                            <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-                                <div>
-                                    <h1 class="text-2xl sm:text-3xl font-semibold tracking-tight text-gray-900">Dashboard</h1>
-                                    <p class="mt-1 text-sm text-gray-600">Kelola profil, portofolio, dan pantau lamaran kamu.</p>
-                                </div>
-
-                                <div class="flex flex-col sm:flex-row gap-3">
-                                    <div class="relative w-full sm:w-80">
-                                        <label class="sr-only" for="job-search">Cari lowongan</label>
-                                        <input
-                                            id="job-search"
-                                            type="text"
-                                            placeholder="Cari lowongan…"
-                                            class="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-900/10 focus:border-gray-300 transition"
-                                        >
-                                        <div class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 border border-gray-200 rounded-xl px-2 py-1 bg-gray-50">
-                                            ⌘ K
-                                        </div>
-                                    </div>
-
-                                    <a href="{{ $routes['jobs'] }}" class="{{ $btnSecondary }}">Cari Lowongan</a>
-                                    <a href="{{ $routes['tracking'] }}" class="{{ $btnPrimary }}">Tracking</a>
-                                </div>
-                            </div>
-
-                            <div class="mt-7 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                                @foreach($statCards as $card)
-                                    <div class="bg-white border border-gray-200 rounded-3xl shadow-sm p-5">
-                                        <div class="flex items-start justify-between gap-4">
-                                            <div>
-                                                <p class="text-xs text-gray-600">{{ $card['label'] }}</p>
-                                                <p class="mt-2 text-3xl font-semibold text-gray-900">{{ $card['value'] }}</p>
-                                                <p class="mt-2 text-xs text-gray-500">{{ $card['desc'] }}</p>
-                                            </div>
-
-                                            <div class="h-10 w-10 rounded-2xl flex items-center justify-center text-xs font-semibold {{ $card['iconClass'] }}">
-                                                {{ $card['icon'] }}
-                                            </div>
-                                        </div>
-
-                                        <a href="{{ $card['actionHref'] }}" class="mt-4 w-full {{ $card['actionClass'] }}">
-                                            {{ $card['actionLabel'] }}
-                                        </a>
-                                    </div>
-                                @endforeach
-
-                                <div class="bg-white border border-gray-200 rounded-3xl shadow-sm p-5">
-                                    <div class="flex items-start justify-between gap-4">
-                                        <div>
-                                            <p class="text-xs text-gray-600">Progress Profil</p>
-                                            <p class="mt-2 text-3xl font-semibold text-gray-900">{{ $progress }}%</p>
-                                            <p class="mt-2 text-xs text-gray-500">Target {{ $target }} showcase</p>
-                                        </div>
-
-                                        <div class="h-10 w-10 rounded-2xl bg-gray-900 text-white flex items-center justify-center text-xs font-semibold">
-                                            ✓
-                                        </div>
-                                    </div>
-
-                                    <div class="mt-4 h-2 rounded-full bg-gray-100 overflow-hidden">
-                                        <div class="h-full bg-gray-900" style="width: {{ $progress }}%"></div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-4">
-                                <div class="lg:col-span-2 bg-white border border-gray-200 rounded-3xl shadow-sm overflow-hidden">
-                                    <div class="px-6 py-5 border-b border-gray-200 flex items-center justify-between">
-                                        <div>
-                                            <p class="text-sm font-semibold text-gray-900">Lamaran Terbaru</p>
-                                            <p class="mt-1 text-xs text-gray-600">Akses cepat untuk detail lamaran.</p>
-                                        </div>
-
-                                        <a href="{{ $routes['tracking'] }}"
-                                           class="text-sm text-gray-900 underline underline-offset-4 hover:text-gray-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-900/20 focus-visible:ring-offset-2 focus-visible:ring-offset-white rounded-lg px-1">
-                                            Lihat semua
-                                        </a>
-                                    </div>
-
-                                    <div class="divide-y divide-gray-200">
-                                        @forelse(($latestApplications ?? collect()) as $app)
-                                            <div class="px-6 py-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                                                <div class="min-w-0">
-                                                    <p class="text-sm font-semibold text-gray-900 truncate">
-                                                        {{ $app->job?->judul ?? 'Lowongan' }}
-                                                    </p>
-                                                    <p class="mt-1 text-sm text-gray-600 truncate">
-                                                        {{ $app->job?->company?->nama ?? $app->job?->company?->name ?? 'Perusahaan' }}
-                                                    </p>
-                                                    <p class="mt-2 text-xs text-gray-500">
-                                                        {{ $app->created_at?->format('d M Y, H:i') }}
-                                                    </p>
-                                                </div>
-
-                                                <div class="flex items-center gap-2">
-                                                    <span class="text-xs px-3 py-1 rounded-full border border-gray-200 bg-gray-50 text-gray-800">
-                                                        {{ $app->status ?? 'Dikirim' }}
-                                                    </span>
-
-                                                    <a href="{{ route('pelamar.applications.show', $app->id) }}"
-                                                       class="rounded-2xl bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-black transition shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-900/20 focus-visible:ring-offset-2 focus-visible:ring-offset-white">
-                                                        Detail
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        @empty
-                                            <div class="px-6 py-10 text-center text-sm text-gray-600">
-                                                Belum ada lamaran. Mulai cari lowongan dan apply.
-                                            </div>
-                                        @endforelse
-                                    </div>
-                                </div>
-
-                                <div class="bg-white border border-gray-200 rounded-3xl shadow-sm p-6">
-                                    <div class="flex items-start justify-between gap-4">
-                                        <div>
-                                            <p class="text-sm font-semibold text-gray-900">Checklist</p>
-                                            <p class="mt-1 text-xs text-gray-600">Langkah cepat biar siap apply.</p>
-                                        </div>
-
-                                        <div class="h-10 w-10 rounded-2xl border border-gray-200 bg-gray-50 flex items-center justify-center text-xs font-semibold text-gray-900">
-                                            ✓
-                                        </div>
-                                    </div>
-
-                                    <div class="mt-5 space-y-3">
-                                        <a href="{{ $routes['profile_docs'] }}"
-                                           class="block rounded-2xl border border-gray-200 bg-gray-50 p-4 hover:bg-gray-100 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-900/20 focus-visible:ring-offset-2 focus-visible:ring-offset-white">
-                                            <p class="text-sm font-semibold text-gray-900">Lengkapi dokumen</p>
-                                            <p class="mt-1 text-sm text-gray-600">Tambah CV dan surat lamaran.</p>
-                                        </a>
-
-                                        <a href="{{ $routes['portofolio'] }}"
-                                           class="block rounded-2xl border border-gray-200 bg-gray-50 p-4 hover:bg-gray-100 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-900/20 focus-visible:ring-offset-2 focus-visible:ring-offset-white">
-                                            <p class="text-sm font-semibold text-gray-900">Rapikan portofolio</p>
-                                            <p class="mt-1 text-sm text-gray-600">Tambahkan showcase terbaik.</p>
-                                        </a>
-
-                                        <a href="{{ $routes['jobs'] }}"
-                                           class="block rounded-2xl border border-gray-200 bg-gray-50 p-4 hover:bg-gray-100 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-900/20 focus-visible:ring-offset-2 focus-visible:ring-offset-white">
-                                            <p class="text-sm font-semibold text-gray-900">Cari lowongan</p>
-                                            <p class="mt-1 text-sm text-gray-600">Gunakan filter untuk hasil relevan.</p>
-                                        </a>
-
-                                        <a href="{{ $routes['notifications'] }}"
-                                           class="block rounded-2xl border border-gray-200 bg-gray-50 p-4 hover:bg-gray-100 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-900/20 focus-visible:ring-offset-2 focus-visible:ring-offset-white">
-                                            <p class="text-sm font-semibold text-gray-900">Cek notifikasi</p>
-                                            <p class="mt-1 text-sm text-gray-600">Update status lamaran masuk di sini.</p>
-                                        </a>
-                                    </div>
-
-                                    <div class="mt-6 rounded-3xl border border-gray-200 bg-white p-5">
-                                        <p class="text-xs text-gray-600">Status</p>
-
-                                        @if($profileCompleteValue)
-                                            <p class="mt-2 text-sm font-semibold text-gray-900">Siap untuk apply</p>
-                                            <p class="mt-1 text-xs text-gray-500">Dokumen utama sudah lengkap.</p>
-                                        @else
-                                            <p class="mt-2 text-sm font-semibold text-gray-900">Perlu dilengkapi</p>
-                                            <p class="mt-1 text-xs text-gray-500">Lengkapi CV & surat lamaran dulu.</p>
-                                        @endif
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </main>
-                </div>
+    <div class="flex min-h-screen bg-[#E5E5E5]">
+        <aside class="w-64 bg-[#F2F2F2] border-r border-gray-300 flex flex-col justify-between">
+            <div>
+                <div class="p-8">
+                    <img src="{{ asset('images/logo.png') }}" alt="SIKAP" class="h-8"> </div>
+                
+                <nav class="mt-4 px-4 space-y-2">
+                    @foreach($menuItems as $item)
+                        @php $isActive = request()->routeIs($item['active']); @endphp
+                        <a href="{{ $item['href'] }}" 
+                           class="flex items-center gap-3 px-4 py-3 rounded-xl transition {{ $isActive ? 'bg-[#555555] text-white shadow-md' : 'text-gray-700 hover:bg-gray-200' }}">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ $item['icon'] }}"></path>
+                            </svg>
+                            <span class="font-medium">{{ $item['label'] }}</span>
+                        </a>
+                    @endforeach
+                </nav>
             </div>
-        </div>
+
+            <div class="p-4 border-t border-gray-300">
+                <form method="POST" action="{{ $routes['logout'] }}">
+                    @csrf
+                    <button type="submit" class="flex items-center gap-3 w-full px-4 py-3 text-gray-700 hover:bg-gray-200 rounded-xl transition font-medium">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                        </svg>
+                        Keluar
+                    </button>
+                </form>
+            </div>
+        </aside>
+
+        <main class="flex-1">
+            <header class="bg-white p-4 flex justify-between items-center px-8 border-b border-gray-200">
+                <div class="relative w-96">
+                    <input type="text" placeholder="Cari Lowongan Pekerjaan" 
+                           class="w-full bg-[#D9D9D9] rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-gray-400">
+                </div>
+                <div class="flex items-center gap-6">
+                    <button class="relative text-gray-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+                        <span class="absolute top-0 right-0 h-2 w-2 bg-red-500 rounded-full"></span>
+                    </button>
+                    <div class="flex items-center gap-2">
+                        <span class="font-medium text-gray-800">{{ auth()->user()->name }}</span>
+                        <div class="h-8 w-8 bg-gray-300 rounded-full flex items-center justify-center">
+                            <svg class="w-5 h-5 text-gray-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path></svg>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="p-8 bg-[#444444] min-h-[calc(100vh-73px)]">
+                <div class="mb-8">
+                    <h1 class="text-white text-3xl font-bold italic">Halo, {{ auth()->user()->name }}!</h1>
+                    <p class="text-gray-300">Semoga harimu menyenangkan dan semoga segera mendapatkan pekerjaan terbaik.</p>
+                </div>
+
+                <div class="bg-white rounded-2xl p-8 mb-6 shadow-lg">
+                    <h2 class="font-bold text-lg mb-6">Statistik Lamaran</h2>
+                    <div class="flex justify-center gap-12 text-center">
+                        <div>
+                            <div class="w-16 h-16 bg-[#3498DB] text-white rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-2">{{ $applicationCountValue }}</div>
+                            <p class="text-gray-700 font-medium">Dikirim</p>
+                        </div>
+                        <div>
+                            <div class="w-16 h-16 bg-[#52C41A] text-white rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-2">3</div>
+                            <p class="text-gray-700 font-medium">Diterima</p>
+                        </div>
+                        <div>
+                            <div class="w-16 h-16 bg-[#FADB14] text-white rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-2">2</div>
+                            <p class="text-gray-700 font-medium">Interview</p>
+                        </div>
+                        <div>
+                            <div class="w-16 h-16 bg-[#FF4D4F] text-white rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-2">2</div>
+                            <p class="text-gray-700 font-medium">Ditolak</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl p-8 mb-6 shadow-lg">
+                    <h2 class="font-bold text-lg mb-6">Status Lamaran Terbaru</h2>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-center border-collapse">
+                            <thead>
+                                <tr class="border-b border-gray-300">
+                                    <th class="py-3 font-semibold text-gray-700 border-r border-gray-300 px-4">Perusahaan</th>
+                                    <th class="py-3 font-semibold text-gray-700 border-r border-gray-300 px-4">Posisi</th>
+                                    <th class="py-3 font-semibold text-gray-700 border-r border-gray-300 px-4">Status</th>
+                                    <th class="py-3 font-semibold text-gray-700 px-4">Waktu</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200">
+                                @forelse(($latestApplications ?? []) as $app)
+                                    <tr>
+                                        <td class="py-4 border-r border-gray-200">{{ $app->job?->company?->name ?? 'PT ABC Bandung' }}</td>
+                                        <td class="py-4 border-r border-gray-200">{{ $app->job?->judul ?? 'Back End Developer' }}</td>
+                                        <td class="py-4 border-r border-gray-200">{{ $app->status ?? 'Ditolak' }}</td>
+                                        <td class="py-4 text-gray-500">{{ $app->created_at?->diffForHumans() ?? '30 Menit lalu' }}</td>
+                                    </tr>
+                                @empty
+                                    <tr><td class="py-4 border-r border-gray-200 px-4">PT ABC Bandung</td><td class="py-4 border-r border-gray-200 px-4">Back End Developer</td><td class="py-4 border-r border-gray-200 px-4">Ditolak</td><td class="py-4 px-4">30 Menit lalu</td></tr>
+                                    <tr><td class="py-4 border-r border-gray-200 px-4">PT DGC Karawang</td><td class="py-4 border-r border-gray-200 px-4">UI/UX Designer</td><td class="py-4 border-r border-gray-200 px-4">Interview</td><td class="py-4 px-4">1 Jam lalu</td></tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl p-8 shadow-lg">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="font-bold text-lg">Project Showcase Terbaru</h2>
+                        <a href="{{ $routes['portofolio'] }}" class="text-blue-600 text-sm hover:underline">Lihat Semua</a>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        @foreach(['A', 'B', 'C'] as $idx)
+                        <div class="bg-[#555555] rounded-xl p-4 text-center text-white">
+                            <div class="bg-gray-200 rounded-lg h-40 mb-4 overflow-hidden flex items-center justify-center">
+                                <img src="https://via.placeholder.com/300x200" alt="Project" class="object-cover w-full">
+                            </div>
+                            <p class="font-bold mb-1">PROJECT {{ $idx }}</p>
+                            <div class="flex items-center justify-center gap-1 text-sm">
+                                <svg class="w-4 h-4 text-red-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path></svg>
+                                {{ rand(15, 25) }}
+                            </div>
+                        </div>
+                        @endforeach
+                    </div>
+                </div>
+
+                <footer class="mt-8 text-center text-gray-400 text-sm">
+                    <p>&copy; 2025, Sistem Informasi Karier dan Portofolio</p>
+                </footer>
+            </div>
+        </main>
     </div>
 @endsection
